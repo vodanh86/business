@@ -2,7 +2,9 @@
 
 use Illuminate\Routing\Router;
 
+
 Admin::routes();
+
 
 Route::group([
     'prefix'        => config('admin.route.prefix'),
@@ -12,5 +14,5 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-
+    $router->resource('/tuition-collection', TuitionCollectionController::class);
 });
