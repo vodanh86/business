@@ -25,21 +25,28 @@ class TuitionCollectionController extends AdminController{
      */
     protected function grid()
     {
+        $dateFormatter = function ($updatedAt) {
+            $carbonUpdatedAt = Carbon::parse($updatedAt);
+            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
+        };
+        $moneyFormatter = function ($money) {
+            return number_format($money, 2, ',', ' ') . " VND";
+        };
         $grid = new Grid(new TuitionCollection());
         
         $grid->column('id', __('Id'));
-        $grid->column('business.code', __('Lop'));
-        $grid->column('business.company.code', __('Test'));
+        $grid->column('business.code', __('Bussiness Code'));
+        $grid->column('business.company.code', __('Branch code'));
         $grid->column('student', __('Học sinh'));
         $grid->column('processing_date', __('processing_date'));
-        $grid->column('value_date', __('value_date'));
+        $grid->column('value_date', __('value_date'))->display($dateFormatter);
         $grid->column('amount', __('amount'));
-        $grid->column('unit_price', __('unit_price'));
-        $grid->column('value', __('value'));
-        $grid->column('next_date', __('next_date'));
+        $grid->column('unit_price', __('unit_price'))->display($moneyFormatter);
+        $grid->column('value', __('value'))->display($moneyFormatter);
+        $grid->column('next_date', __('next_date'))->display($dateFormatter);
         $grid->column('description', __('description'));
-        $grid->column('created_at', __('created_at'));
-        $grid->column('updated_at', __('updated_at'));
+        $grid->column('created_at', __('created_at'))->display($dateFormatter);
+        $grid->column('updated_at', __('updated_at'))->display($dateFormatter);
         return $grid;
     }
      /**

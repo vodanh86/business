@@ -15,4 +15,11 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('/tuition-collection', TuitionCollectionController::class);
+    $router->resource('/branchs', BranchController::class);
+    $router->resource('/employee', EmployeeController::class);
+    $router->resource('/business', BusinessController::class);
+    $router->resource('/classes', ClassController::class);
+    $router->resource('/account_bank', AccountController::class);
+    $router->resource('/student', StudentController::class);
+    
 });
