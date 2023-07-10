@@ -16,7 +16,7 @@ class StudentController extends AdminController{
      *
      * @var string
      */
-    protected $title = 'Hoc sinh';
+    protected $title = 'Học sinh';
 
     /**
      * Make a grid builder.
@@ -29,24 +29,21 @@ class StudentController extends AdminController{
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
-        $moneyFormatter = function ($money) {
-            return number_format($money, 2, ',', ' ') . " VND";
-        };
         $grid = new Grid(new Student());
         
         $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
+        $grid->column('name', __('Tên'));
         // $grid->column('class', __('classId'));
-        $grid->column('email', __('email'));
-        $grid->column('phone_number', __('phone_number'));
-        $grid->column('address', __('address'));
-        $grid->column('last_call', __('last_call'));
-        $grid->column('school', __('school'));
-        $grid->column('wom', __('wom'));
-        $grid->column('channel', __('channel'));
-        $grid->column('status', __('status'));
-        $grid->column('created_at', __('created_at'))->display($dateFormatter);
-        $grid->column('updated_at', __('updated_at'))->display($dateFormatter);
+        $grid->column('email', __('Email'));
+        $grid->column('phone_number', __('Số điện thoại'));
+        $grid->column('address', __('Địa chỉ'));
+        $grid->column('last_call', __('Liên lạc gần nhất'));
+        $grid->column('school', __('Trường'));
+        $grid->column('wom', __('WOM'));
+        $grid->column('channel', __('Kênh'));
+        $grid->column('status', __('Trạng thái'));
+        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
+        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
     }
      /**
@@ -57,24 +54,6 @@ class StudentController extends AdminController{
     protected function form()
     {
         $form = new Form(new Student());
-        $status = array();
-        // if ($form->isEditing()) {
-        //     $id = request()->route()->parameter('contract_acceptance');
-        //     $model = $form->model()->find($id);
-        //     $currentStatus = $model->status;
-        //     $nextStatuses = StatusTransition::where(["table" => Constant::CONTRACT_ACCEPTANCE_TABLE, "status_id" => $currentStatus])->where('editors', 'LIKE', '%'.Admin::user()->roles[0]->slug.'%')->get();
-        //     $status[$model->status] = $model->statusDetail->name;
-        //     foreach($nextStatuses as $nextStatus){
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // } else {
-        //     $nextStatuses = StatusTransition::where("table", Constant::CONTRACT_ACCEPTANCE_TABLE)->whereNull("status_id")->get();
-        //     foreach ($nextStatuses as $nextStatus) {
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // }
-        // $form->select('class_id', __('valuation_document.contract_id'))->options(Contract::where("branch_id", Admin::user()->branch_id)->where('status', Constant::CONTRACT_INPUTTING_STATUS)->pluck('code', 'id'));
-       
         $form->text('name', __('Name'));
         // $grid->column('class', __('classId'));
         $form->text('name', __('Name'));

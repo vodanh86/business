@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Http\Models\Company;
 use App\Http\Models\Employee;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -16,7 +17,7 @@ class EmployeeController extends AdminController{
      *
      * @var string
      */
-    protected $title = 'Class';
+    protected $title = 'Nhân sự';
 
     /**
      * Make a grid builder.
@@ -25,13 +26,18 @@ class EmployeeController extends AdminController{
      */
     protected function grid()
     {
+        $dateFormatter = function ($updatedAt) {
+            $carbonUpdatedAt = Carbon::parse($updatedAt);
+            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
+        };
         $grid = new Grid(new Employee());
         
         $grid->column('id', __('Id'));
-        $grid->column('name', __('name'));
-        $grid->column('status', __('status'));
-        $grid->column('created_at', __('created_at'));
-        $grid->column('updated_at', __('updated_at'));
+        $grid->column('company.code', __('Mã công ty'));
+        $grid->column('name', __('Họ và tên'));
+        $grid->column('status', __('Trạng thái'));
+        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
+        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
     }
      /**
@@ -41,26 +47,15 @@ class EmployeeController extends AdminController{
      */
     protected function form()
     {
+        $companies = Company::with('companies')->get()->pluck('code', 'id');
         $form = new Form(new Employee());
-        $status = array();
-        // if ($form->isEditing()) {
-        //     $id = request()->route()->parameter('contract_acceptance');
-        //     $model = $form->model()->find($id);
-        //     $currentStatus = $model->status;
-        //     $nextStatuses = StatusTransition::where(["table" => Constant::CONTRACT_ACCEPTANCE_TABLE, "status_id" => $currentStatus])->where('editors', 'LIKE', '%'.Admin::user()->roles[0]->slug.'%')->get();
-        //     $status[$model->status] = $model->statusDetail->name;
-        //     foreach($nextStatuses as $nextStatus){
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // } else {
-        //     $nextStatuses = StatusTransition::where("table", Constant::CONTRACT_ACCEPTANCE_TABLE)->whereNull("status_id")->get();
-        //     foreach ($nextStatuses as $nextStatus) {
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // }
-        // $form->select('class_id', __('valuation_document.contract_id'))->options(Contract::where("branch_id", Admin::user()->branch_id)->where('status', Constant::CONTRACT_INPUTTING_STATUS)->pluck('code', 'id'));
-        $form->text('name', __('name'));
-        $form->select('status', __('status'))->options(array(1 => 1, 2));
+        $form->divider('1. Công ty');
+        $form->select('company_code', __('Mã công ty'))->options($companies)->required();
+        $form->text('name', __('Tên công ty'))->disable();
+
+        $form->divider('2. Nhân sự');
+        $form->text('name', __('Họ và tên'));
+        $form->select('status', __('Trạng thái'))->options(array(1 => 1, 2));
 
         // $url = 'http://127.0.0.1:8000/api/contract';
         // $url = env('APP_URL') . '/api/contract';

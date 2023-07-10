@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Laravel-admin',
+    'name' => 'Business',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Laravel</b> admin',
+    'logo' => "<p>Business</p>",
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>La</b>',
+    'logo-mini' => '<b>Biz</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -249,7 +249,7 @@ return [
     | Set a default avatar for newly created users.
     |
     */
-    'default_avatar' => '/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg',
+    'default_avatar' => 'https://sba.net.vn/wp-content/uploads/2020/09/LOGO-SBA-SVG-02.svg',
 
     /*
     |--------------------------------------------------------------------------
@@ -405,6 +405,16 @@ return [
     |
     */
     'extensions' => [
-
+    ],
+    
+    'model_button_styles' => [
+        'view'    => 'btn btn-outline-primary',
+        'edit'    => 'btn btn-outline-primary',
+        'delete'  => 'btn btn-outline-primary',
+        'export'  => 'btn btn-outline-primary',
+        'create'  => 'btn btn-outline-primary',
+        'cancel'  => 'btn btn-secondary',
+        'filter'  => 'btn btn-secondary',
+        'refresh' => 'btn btn-secondary',
     ],
 ];
