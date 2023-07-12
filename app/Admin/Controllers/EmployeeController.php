@@ -5,7 +5,6 @@ namespace App\Admin\Controllers;
 use App\Http\Models\Company;
 use App\Http\Models\Employee;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Carbon\Carbon;
@@ -26,16 +25,19 @@ class EmployeeController extends AdminController{
      */
     protected function grid()
     {
+        $statusFormatter = function ($value) {
+            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
+        };
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
         $grid = new Grid(new Employee());
         
-        $grid->column('id', __('Id'));
-        $grid->column('company.code', __('Mã công ty'));
+        $grid->column('id', __('ID'));
+        $grid->column('company.name', __('Mã công ty'));
         $grid->column('name', __('Họ và tên'));
-        $grid->column('status', __('Trạng thái'));
+        $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
@@ -55,7 +57,7 @@ class EmployeeController extends AdminController{
 
         $form->divider('2. Nhân sự');
         $form->text('name', __('Họ và tên'));
-        $form->select('status', __('Trạng thái'))->options(array(1 => 1, 2));
+        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
 
         // $url = 'http://127.0.0.1:8000/api/contract';
         // $url = env('APP_URL') . '/api/contract';

@@ -4,8 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Http\Models\BusinessClass;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
+use Encore\Admin\Form\Field\MultipleSelect;
 use Encore\Admin\Grid;
 use Carbon\Carbon;
 
@@ -16,7 +16,7 @@ class ClassController extends AdminController{
      *
      * @var string
      */
-    protected $title = 'Class';
+    protected $title = 'Lớp học';
 
     /**
      * Make a grid builder.
@@ -25,13 +25,23 @@ class ClassController extends AdminController{
      */
     protected function grid()
     {
+        $statusFormatter = function ($value) {
+            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
+        };
+        $dateFormatter = function ($updatedAt) {
+            $carbonUpdatedAt = Carbon::parse($updatedAt);
+            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
+        };
         $grid = new Grid(new BusinessClass());
         
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('name'));
-        $grid->column('status', __('status'));
-        $grid->column('created_at', __('created_at'));
-        $grid->column('updated_at', __('updated_at'));
+        $grid->column('id', __('ID'));
+        $grid->column('name', __('Tên'));
+        $grid->column('description', __('Mô tả'));
+        $grid->column('schedule', __('Lịch học'));
+        $grid->column('teacher', __('Giảng viên'));
+        $grid->column('status', __('Trạng thái'))->display($statusFormatter);
+        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
+        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
     }
      /**
@@ -42,25 +52,11 @@ class ClassController extends AdminController{
     protected function form()
     {
         $form = new Form(new BusinessClass());
-        $status = array();
-        // if ($form->isEditing()) {
-        //     $id = request()->route()->parameter('contract_acceptance');
-        //     $model = $form->model()->find($id);
-        //     $currentStatus = $model->status;
-        //     $nextStatuses = StatusTransition::where(["table" => Constant::CONTRACT_ACCEPTANCE_TABLE, "status_id" => $currentStatus])->where('editors', 'LIKE', '%'.Admin::user()->roles[0]->slug.'%')->get();
-        //     $status[$model->status] = $model->statusDetail->name;
-        //     foreach($nextStatuses as $nextStatus){
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // } else {
-        //     $nextStatuses = StatusTransition::where("table", Constant::CONTRACT_ACCEPTANCE_TABLE)->whereNull("status_id")->get();
-        //     foreach ($nextStatuses as $nextStatus) {
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // }
-        // $form->select('class_id', __('valuation_document.contract_id'))->options(Contract::where("branch_id", Admin::user()->branch_id)->where('status', Constant::CONTRACT_INPUTTING_STATUS)->pluck('code', 'id'));
-        $form->text('name', __('name'));
-        $form->select('status', __('status'))->options(array(1 => 1, 2));
+        $form->text('name', __('Tên'));
+        $form->text('description', __('Mô tả'));
+        $form->multipleSelect('schedule', __('Lịch học'))->options(Constant::SCHEDULE_CLASS);
+        $form->text('teacher', __('Giảng viên'));
+        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
 
         // $url = 'http://127.0.0.1:8000/api/contract';
         // $url = env('APP_URL') . '/api/contract';

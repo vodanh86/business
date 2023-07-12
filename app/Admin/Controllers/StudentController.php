@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Http\Models\BusinessClass;
 use App\Http\Models\Student;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -33,7 +34,6 @@ class StudentController extends AdminController{
         
         $grid->column('id', __('Id'));
         $grid->column('name', __('Tên'));
-        // $grid->column('class', __('classId'));
         $grid->column('email', __('Email'));
         $grid->column('phone_number', __('Số điện thoại'));
         $grid->column('address', __('Địa chỉ'));
@@ -53,18 +53,27 @@ class StudentController extends AdminController{
      */
     protected function form()
     {
+        $businessClasses = BusinessClass::with('classes')->get()->pluck('code', 'id');
         $form = new Form(new Student());
-        $form->text('name', __('Name'));
         // $grid->column('class', __('classId'));
-        $form->text('name', __('Name'));
-        $form->number('phone_number', __('phone_number'));
-        $form->text('address', __('address'));
-        $form->date('last_call', __('last_call'));
-        $form->text('school', __('school'));
-        $form->text('wom', __('wom'));
-        $form->text('channel', __('channel'));
-        $form->select('status', __('status'))->options(array(1 => 1, 2));
+        $form->divider('1. Thông tin lớp học');
+        $form->select('class_code', __('Mã lớp học'))->options($businessClasses)->required();
+        $form->text('name', __('Tên lớp học'))->disable();
+        $form->text('schedule', __('Lịch học'))->disable();
+        $form->text('teacher', __('Giảng viên'))->disable();
 
+
+        $form->divider('2. Thông tin học sinh');
+        $form->text('name', __('Tên'));
+        $form->text('email', __('Email'));
+        $form->text('phone_number', __('Số điện thoại'));
+        $form->text('address', __('Địa chỉ'));
+        $form->text('last_call', __('Liên lạc gần nhất'));
+        $form->text('school', __('Trường'));
+        $form->text('wom', __('WOM'));
+        $form->text('channel', __('Kênh'));
+        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
+      
         // $url = 'http://127.0.0.1:8000/api/contract';
         // $url = env('APP_URL') . '/api/contract';
         

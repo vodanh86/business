@@ -25,6 +25,9 @@ class BusinessController extends AdminController{
      */
     protected function grid()
     {
+        $statusFormatter = function ($value) {
+            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
+        };
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
@@ -35,7 +38,7 @@ class BusinessController extends AdminController{
         $grid->column('code', __('Mã'));
         $grid->column('type', __('Loại'));
         $grid->column('name', __('Tên'));
-        $grid->column('status', __('Trạng thái'));
+        $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
@@ -51,7 +54,7 @@ class BusinessController extends AdminController{
         $form->text('code', __('Mã'))->required();
         $form->text('type', __('Loại'))->required();
         $form->text('name', __('Tên'))->required();
-        $form->select('status', __('Trạng thái'))->options(array(1 => 1, 2))->required();
+        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
         return $form;
     }
 }
