@@ -2,21 +2,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Company;
+use App\Http\Models\Branch;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Carbon\Carbon;
+use Encore\Admin\Show;
 
-
-class BranchController extends AdminController{
- /**
+class BranchController extends AdminController
+{
+    /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Branch';
+    protected $title = 'Quản lý doanh nghiệp';
 
     /**
      * Make a grid builder.
@@ -25,68 +24,50 @@ class BranchController extends AdminController{
      */
     protected function grid()
     {
-        $grid = new Grid(new Company());
-        
+        $grid = new Grid(new Branch());
+
         $grid->column('id', __('Id'));
-        $grid->column('code', __('code'));
-        $grid->column('name', __('name'));
-        $grid->column('status', __('status'));
-        $grid->column('created_at', __('created_at'));
-        $grid->column('updated_at', __('updated_at'));
+        $grid->column('branch_name', __('Tên chi nhánh'));
+        $grid->column('code', __('Mã chi nhánh'));
+        $grid->column('address', __('Địa chỉ'));
+        $grid->column('created_at', __('Ngày tạo'));
+        $grid->column('updated_at', __('Ngày cập nhật'));
+        $grid->model()->orderBy('id', 'desc');
         return $grid;
     }
-     /**
+
+    /**
+     * Make a show builder.
+     *
+     * @param mixed $id
+     * @return Show
+     */
+    protected function detail($id)
+    {
+        $show = new Show(Branch::findOrFail($id));
+
+        $show->field('id', __('Id'));
+        $show->field('branch_name', __('Tên chi nhánh'));
+        $show->field('address', __('Địa chỉ'));
+        $show->field('code', __('Mã chi nhánh'));
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
+        return $show;
+    }
+
+    /**
      * Make a form builder.
      *
      * @return Form
      */
     protected function form()
     {
-        $form = new Form(new Company());
-        $status = array();
-        // if ($form->isEditing()) {
-        //     $id = request()->route()->parameter('contract_acceptance');
-        //     $model = $form->model()->find($id);
-        //     $currentStatus = $model->status;
-        //     $nextStatuses = StatusTransition::where(["table" => Constant::CONTRACT_ACCEPTANCE_TABLE, "status_id" => $currentStatus])->where('editors', 'LIKE', '%'.Admin::user()->roles[0]->slug.'%')->get();
-        //     $status[$model->status] = $model->statusDetail->name;
-        //     foreach($nextStatuses as $nextStatus){
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // } else {
-        //     $nextStatuses = StatusTransition::where("table", Constant::CONTRACT_ACCEPTANCE_TABLE)->whereNull("status_id")->get();
-        //     foreach ($nextStatuses as $nextStatus) {
-        //         $status[$nextStatus->next_status_id] = $nextStatus->nextStatus->name;
-        //     }
-        // }
-        // $form->select('class_id', __('valuation_document.contract_id'))->options(Contract::where("branch_id", Admin::user()->branch_id)->where('status', Constant::CONTRACT_INPUTTING_STATUS)->pluck('code', 'id'));
-        $form->text('code', __('code'));
-        $form->text('name', __('name'));
-        $form->select('status', __('status'))->options(array(1 => 1, 2));
+        $form = new Form(new Branch());
 
-        // $url = 'http://127.0.0.1:8000/api/contract';
-        // $url = env('APP_URL') . '/api/contract';
-        
-        // $script = <<<EOT
-        // $(document).on('change', ".contract_id", function () {
-        //     $.get("$url",{q : this.value}, function (data) {
-        //         $("#property").val(data.property);
-        //         $(".customer_type").val(parseInt(data.customer_type)).change();
-        //         $("#tax_number").val(data.tax_number);  
-        //         $("#business_name").val(data.business_name);
-        //         $("#personal_address").val(data.personal_address);
-        //         $("#business_address").val(data.business_address);
-        //         $("#representative").val(data.representative);
-        //         $("#position").val(data.position);
-        //         $("#personal_name").val(data.personal_name);
-        //         $("#id_number").val(data.id_number);  
-        //         $("#issue_place").val(data.issue_place);  
-        //         $("#issue_date").val(data.issue_date); 
-        //     });
-        // });
-        // EOT;
+        $form->text('branch_name', __('Tên chi nhánh'))->required();
+        $form->text('code', __('Mã chi nhánh'))->required();
+        $form->text('address', __('Địa chỉ'));
 
-        // Admin::script($script);
         return $form;
     }
 }

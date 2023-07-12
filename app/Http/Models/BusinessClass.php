@@ -12,7 +12,10 @@ class BusinessClass extends Model
     {
         return $this->hasMany(Company::class);
     }
-
+    public function classes()
+    {
+        return $this->hasMany(Student::class, 'class_id');
+    }
 	protected $hidden = [
     ];
 

@@ -12,6 +12,10 @@ class TuitionCollection extends Model
     {
         return $this->belongsTo(Business::class, 'business_id');
     }
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'business_id');
+    }
 
 	protected $hidden = [
     ];
