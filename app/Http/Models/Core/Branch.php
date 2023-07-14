@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Models;
+namespace App\Http\Models\Core;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Company extends Model
+class Branch extends Model
 {
-    protected $table = 'company';
+    protected $table = 'core_branch';
 
     public function business()
     {
         return $this->belongsTo(Business::class, 'business_id');
     }
-    public function companies()
+    public function classes()
     {
-        return $this->hasMany(Company::class, 'company_id');
+        return $this->hasMany(EduClass::class,'branch_code');
     }
     protected $hidden = [
     ];

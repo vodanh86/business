@@ -1,20 +1,16 @@
 <?php
 
-namespace App\Http\Models;
+namespace App\Http\Models\Core;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TuitionCollection extends Model
+class Account extends Model
 {
-    protected $table = 'tuition_collection';
+    protected $table = 'core_account';
 
     public function business()
     {
         return $this->belongsTo(Business::class, 'business_id');
-    }
-    public function company()
-    {
-        return $this->belongsTo(Company::class, 'business_id');
     }
 
 	protected $hidden = [

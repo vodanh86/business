@@ -2,22 +2,21 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\BusinessClass;
-use App\Http\Models\Student;
+use App\Http\Models\Core\Business;
+use App\Http\Models\Edu\EduTuitionCollection;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Carbon\Carbon;
 
 
-class StudentController extends AdminController{
+class Edu_TuitionCollectionController extends AdminController{
  /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Học sinh';
+    protected $title = 'Thu học phí';
 
     /**
      * Make a grid builder.
@@ -30,18 +29,22 @@ class StudentController extends AdminController{
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
-        $grid = new Grid(new Student());
+        $moneyFormatter = function ($money) {
+            return number_format($money, 2, ',', ' ') . " VND";
+        };
+        $grid = new Grid(new EduTuitionCollection());
         
         $grid->column('id', __('Id'));
-        $grid->column('name', __('Tên'));
-        $grid->column('email', __('Email'));
-        $grid->column('phone_number', __('Số điện thoại'));
-        $grid->column('address', __('Địa chỉ'));
-        $grid->column('last_call', __('Liên lạc gần nhất'));
-        $grid->column('school', __('Trường'));
-        $grid->column('wom', __('WOM'));
-        $grid->column('channel', __('Kênh'));
-        $grid->column('status', __('Trạng thái'));
+        $grid->column('business.code', __('Mã doanh nghiệp'));
+        $grid->column('company.code', __('Mã công ty'));
+        $grid->column('student', __('Học sinh'))->width(150);
+        $grid->column('processing_date', __('Ngày nghiệm thu'))->width(150);
+        $grid->column('value_date', __('Ngày nộp tiền'))->display($dateFormatter)->width(150);
+        $grid->column('amount', __('Số lượng'))->width(150);
+        $grid->column('unit_price', __('Đơn giá'))->display($moneyFormatter)->width(150);
+        $grid->column('value', __('Giá trị'))->display($moneyFormatter)->width(150);
+        $grid->column('next_date', __('Ngày tiếp theo'))->display($dateFormatter)->width(150);
+        $grid->column('description', __('Mô tả'))->width(150);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
@@ -53,27 +56,18 @@ class StudentController extends AdminController{
      */
     protected function form()
     {
-        $businessClasses = BusinessClass::with('classes')->get()->pluck('code', 'id');
-        $form = new Form(new Student());
-        // $grid->column('class', __('classId'));
-        $form->divider('1. Thông tin lớp học');
-        $form->select('class_code', __('Mã lớp học'))->options($businessClasses)->required();
-        $form->text('name', __('Tên lớp học'))->disable();
-        $form->text('schedule', __('Lịch học'))->disable();
-        $form->text('teacher', __('Giảng viên'))->disable();
+        $businesses = Business::with('companies')->get()->pluck('code', 'id');
+        $form = new Form(new EduTuitionCollection());
+        $form->select('business_code', __('Mã doanh nghiệp'))->options($businesses)->required();
+        $form->text('student', __('Học sinh'))->required();
+        $form->date('processing_date', __('Ngày nghiệm thu'))->required();
+        $form->date('value_date', __('Ngày nộp tiền'))->required();
+        $form->text('amount', __('Số lượng'))->required();
+        $form->number('unit_price', __('Đơn giá'))->required();
+        $form->number('value', __('Giá trị'))->required();
+        $form->date('next_date', __('Ngày tiếp theo'))->required();
+        $form->text('description', __('Mô tả'));
 
-
-        $form->divider('2. Thông tin học sinh');
-        $form->text('name', __('Tên'));
-        $form->text('email', __('Email'));
-        $form->text('phone_number', __('Số điện thoại'));
-        $form->text('address', __('Địa chỉ'));
-        $form->text('last_call', __('Liên lạc gần nhất'));
-        $form->text('school', __('Trường'));
-        $form->text('wom', __('WOM'));
-        $form->text('channel', __('Kênh'));
-        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
-      
         // $url = 'http://127.0.0.1:8000/api/contract';
         // $url = env('APP_URL') . '/api/contract';
         

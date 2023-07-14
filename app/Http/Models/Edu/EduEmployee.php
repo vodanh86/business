@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Models;
+namespace App\Http\Models\Edu;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Employee extends Model
+class EduEmployee extends Model
 {
-    protected $table = 'employee';
+    protected $table = 'edu_employee';
 
     public function business()
     {
@@ -14,7 +14,7 @@ class Employee extends Model
     }
     public function company()
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsTo(Branch::class, 'company_id');
     }
 
 

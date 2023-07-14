@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use Encore\Admin\Grid;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
-use App\Http\Models\Branch;
 use App\Http\Models\AdminUser;
+use App\Http\Models\Core\Business;
 use Illuminate\Support\Facades\Hash;
 use Encore\Admin\Controllers\UserController;
 
@@ -33,7 +33,7 @@ class CustomUserController extends UserController
         $grid->column('username', trans('admin.username'));
         $grid->column('name', trans('admin.name'));
         $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
-        $grid->column('branch.branch_name', "Chi nhánh");
+        $grid->column('business.name', "Doanh nghiệp");
         $grid->column('created_at', trans('admin.created_at'));
         $grid->column('updated_at', trans('admin.updated_at'));
         $grid->model()->orderBy('id', 'desc');
@@ -69,6 +69,7 @@ class CustomUserController extends UserController
         $show->field('roles', trans('admin.roles'))->as(function ($roles) {
             return $roles->pluck('name');
         })->label();
+        $show->field('business.name', "Doanh nghiệp");
         $show->field('permissions', trans('admin.permissions'))->as(function ($permission) {
             return $permission->pluck('name');
         })->label();
@@ -109,8 +110,8 @@ class CustomUserController extends UserController
         $form->ignore(['password_confirmation']);
 
         $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
-        $form->select('branch_id', "Chi nhánh")->options(Branch::all()->pluck('branch_name', 'id'))->default(3);
-        //$form->multipleSelect('permissions', trans('admin.permissions'))->options($permissionModel::all()->pluck('name', 'id'));
+        
+        $form->select('business_id', "Doanh nghiệp")->options(Business::all()->pluck('name', 'id'))->default(3);
 
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));

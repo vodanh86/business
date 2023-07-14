@@ -2,22 +2,21 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Business;
-use App\Http\Models\TuitionCollection;
+use App\Http\Models\Core\Account;
+use App\Http\Models\Core\Business;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Carbon\Carbon;
+use Encore\Admin\Facades\Admin;
 
-
-class TuitionCollectionController extends AdminController{
+class Core_AccountController extends AdminController{
  /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Thu học phí';
+    protected $title = 'Tài khoản';
 
     /**
      * Make a grid builder.
@@ -26,26 +25,20 @@ class TuitionCollectionController extends AdminController{
      */
     protected function grid()
     {
+        $statusFormatter = function ($value) {
+            return $value == 1 ? 'Hoạt động' : 'Không hoạt động';
+        };
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
-        $moneyFormatter = function ($money) {
-            return number_format($money, 2, ',', ' ') . " VND";
-        };
-        $grid = new Grid(new TuitionCollection());
+        $grid = new Grid(new Account());
         
-        $grid->column('id', __('Id'));
-        $grid->column('business.code', __('Mã doanh nghiệp'));
-        $grid->column('company.code', __('Mã công ty'));
-        $grid->column('student', __('Học sinh'))->width(150);
-        $grid->column('processing_date', __('Ngày nghiệm thu'))->width(150);
-        $grid->column('value_date', __('Ngày nộp tiền'))->display($dateFormatter)->width(150);
-        $grid->column('amount', __('Số lượng'))->width(150);
-        $grid->column('unit_price', __('Đơn giá'))->display($moneyFormatter)->width(150);
-        $grid->column('value', __('Giá trị'))->display($moneyFormatter)->width(150);
-        $grid->column('next_date', __('Ngày tiếp theo'))->display($dateFormatter)->width(150);
-        $grid->column('description', __('Mô tả'))->width(150);
+        $grid->column('id', __('ID'));
+        $grid->column('number', __('Số tài khoản'));
+        $grid->column('type', __('Loại'));
+        $grid->column('bank_name', __('Tên ngân hàng'));
+        $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
@@ -57,17 +50,17 @@ class TuitionCollectionController extends AdminController{
      */
     protected function form()
     {
-        $businesses = Business::with('companies')->get()->pluck('code', 'id');
-        $form = new Form(new TuitionCollection());
-        $form->select('business_code', __('Mã doanh nghiệp'))->options($businesses)->required();
-        $form->text('student', __('Học sinh'))->required();
-        $form->date('processing_date', __('Ngày nghiệm thu'))->required();
-        $form->date('value_date', __('Ngày nộp tiền'))->required();
-        $form->text('amount', __('Số lượng'))->required();
-        $form->number('unit_price', __('Đơn giá'))->required();
-        $form->number('value', __('Giá trị'))->required();
-        $form->date('next_date', __('Ngày tiếp theo'))->required();
-        $form->text('description', __('Mô tả'));
+        $business = Business::where('id', Admin::user()->business_id)->first();
+        $form = new Form(new Account());
+        $form->divider('1. Doanh nghiệp');
+        $form->display('business_code', __('Mã doanh nghiệp'))->default($business->code);
+        $form->hidden('business_id')->value($business->id);
+
+        $form->divider('1. Thông tin tài khoản');
+        $form->text('number', __('Số tài khoản'));
+        $form->select('type', __('Loại'))->options(array("Asset" => "Asset", "Liabilities"));
+        $form->text('bank_name', __('Tên ngân hàng'));
+        $form->select('status', __('Trạng thái'))->options(array(1 => 'Hoạt động', 2 => 'Không hoạt động'))->required();
 
         // $url = 'http://127.0.0.1:8000/api/contract';
         // $url = env('APP_URL') . '/api/contract';

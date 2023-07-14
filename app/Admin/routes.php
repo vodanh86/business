@@ -16,13 +16,12 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
 
-    $router->resource('/branch-business', BranchController::class);
-    $router->resource('/tuition-collection', TuitionCollectionController::class);
-    $router->resource('/branchs', CompanyController::class);
-    $router->resource('/employee', EmployeeController::class);
-    $router->resource('/business', BusinessController::class);
-    $router->resource('/classes', ClassController::class);
-    $router->resource('/account_bank', AccountController::class);
-    $router->resource('/student', StudentController::class);
+    $router->resource('/branch', Core_BranchController::class);
+    $router->resource('/business', Core_BusinessController::class);
+    $router->resource('/account_bank', Core_AccountController::class);
+    $router->resource('/tuition-collection', Edu_TuitionCollectionController::class);
+    $router->resource('/employee', Edu_EmployeeController::class);
+    $router->resource('/classes', Edu_ClassController::class);
+    $router->resource('/student', Edu_StudentController::class);
     
 });
