@@ -2,15 +2,15 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Company;
-use App\Http\Models\Employee;
+use App\Http\Models\Core\Branch;
+use App\Http\Models\Edu\EduEmployee;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Carbon\Carbon;
 
 
-class EmployeeController extends AdminController{
+class Edu_EmployeeController extends AdminController{
  /**
      * Title for current resource.
      *
@@ -32,7 +32,7 @@ class EmployeeController extends AdminController{
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
-        $grid = new Grid(new Employee());
+        $grid = new Grid(new EduEmployee());
         
         $grid->column('id', __('ID'));
         $grid->column('company.name', __('Mã công ty'));
@@ -49,8 +49,8 @@ class EmployeeController extends AdminController{
      */
     protected function form()
     {
-        $companies = Company::with('companies')->get()->pluck('code', 'id');
-        $form = new Form(new Employee());
+        $companies = Branch::with('companies')->get()->pluck('code', 'id');
+        $form = new Form(new EduEmployee());
         $form->divider('1. Công ty');
         $form->select('company_code', __('Mã công ty'))->options($companies)->required();
         $form->text('name', __('Tên công ty'))->disable();

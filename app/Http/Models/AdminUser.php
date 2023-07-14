@@ -2,7 +2,7 @@
 
 namespace App\Http\Models;
 
-use App\Http\Models\Branch;
+use App\Http\Models\Core\Business;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -92,8 +92,8 @@ class AdminUser extends Model implements AuthenticatableContract
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
     }
 
-    public function branch()
+    public function business()
     {
-        return $this->belongsTo(Branch::class, 'branch_id');
+        return $this->belongsTo(Business::class, 'business_id');
     }
 }
