@@ -3,12 +3,14 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Models\Core\Business;
+use App\Http\Models\Core\Business_Type;
+use App\Http\Models\Core\CommonCode;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Carbon\Carbon;
-
+use Encore\Admin\Facades\Admin;
 
 class Core_BusinessController extends AdminController{
  /**
@@ -34,7 +36,7 @@ class Core_BusinessController extends AdminController{
         };
         $grid = new Grid(new Business());
         
-        $grid->column('type', __('Loại'));
+        $grid->column('businessType.name', __('Loại'));
         $grid->column('name', __('Tên'));
         $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
@@ -53,17 +55,13 @@ class Core_BusinessController extends AdminController{
         $statusFormatter = function ($value) {
             return $value == 1 ? 'Hoạt động' : 'Không hoạt động';
         };
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
         $show = new Show(Business::findOrFail($id));
 
-        $show->field('type', __('Loại'));
+        $show->field('businessType.name', __('Loại'));
         $show->field('name', __('Tên'));
-        $show->field('status', __('Trạng thái'))->display($statusFormatter);
-        $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $show->field('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $show->field('status', __('Trạng thái'))->as($statusFormatter);
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
 
         return $show;
     }
@@ -74,10 +72,12 @@ class Core_BusinessController extends AdminController{
      */
     protected function form()
     {
+        $businessTypes = Business_Type::pluck('name', 'id');
+        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
         $form = new Form(new Business());
-        $form->text('type', __('Loại'))->required();
+        $form->select('type', __('Loại'))->options($businessTypes)->required();
         $form->text('name', __('Tên'))->required();
-        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
+        $form->select('status', __('Trạng thái'))->options($status)->required();
         return $form;
     }
 }

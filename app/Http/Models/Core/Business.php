@@ -12,9 +12,9 @@ class Business extends Model
     {
         return $this->hasMany(Branch::class);
     }
-    public function account()
+    public function businessType()
     {
-        return $this->hasMany(Account::class);
+        return $this->belongsTo(Business_Type::class, 'type');
     }
     protected $hidden = [];
 
