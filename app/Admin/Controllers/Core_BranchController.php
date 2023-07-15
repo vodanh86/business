@@ -81,18 +81,13 @@ class Core_BranchController extends AdminController{
     protected function form()
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
-
         $form = new Form(new Branch());
-        $form->divider('1. Doanh nghiệp');
+
         $form->hidden('business_id')->value($business->id);
-
-        $form->text('type_business', __('Loại doanh nghiệp'))->disable();
         $form->text('name_business', __('Tên doanh nghiệp'))->disable();
-
-        $form->divider('2. Chi nhánh');
         $form->text('branch_name', __('Tên chi nhánh'))->required();
         $form->text('address', __('Địa chỉ'))->required();
-        $form->mobile('phone', __('Số điện thoại'))->required();
+        $form->mobile('phone', __('Số điện thoại'))->options(['mask' => '999 999 9999'])->required();
         $form->select('status', __('Trạng thái'))->options(array(1 => 'Hoạt động', 2 => 'Không hoạt động'))->required();
 
         // $url = 'http://127.0.0.1:8000/api/business';
@@ -103,9 +98,7 @@ class Core_BranchController extends AdminController{
 
         $(function() {
             var businessId = $(".business_id").val();
-            
             $.get("$url",{q : businessId}, function (data) {
-                $("#type_business").val(data.type);
                 $("#name_business").val(data.name);  
             });
         });
