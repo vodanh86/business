@@ -109,8 +109,8 @@ class Edu_TuitionCollectionController extends AdminController{
         $form->date('next_date', __('Ngày tiếp theo'))->required();
         $form->text('description', __('Mô tả'));
 
-        // $url = 'http://127.0.0.1:8000/api/business';
-        $url = env('APP_URL') . '/api/business';
+        $url = 'https://business.metaverse-solution.vn/api/business';
+        // $url = env('APP_URL') . '/api/business';
         
         $script = <<<EOT
 

@@ -103,8 +103,11 @@ class Edu_ClassController extends AdminController{
 
         // $urlBranch = 'http://127.0.0.1:8000/api/branch';
         // $urlBusiness = 'http://127.0.0.1:8000/api/business';
-        $urlBranch = env('APP_URL') . '/api/branch';
-        $urlBusiness = env('APP_URL') . '/api/business';
+        // $urlBranch = env('APP_URL') . '/api/branch';
+        // $urlBusiness = env('APP_URL') . '/api/business';
+
+        $urlBranch = 'https://business.metaverse-solution.vn/api/branch';
+        $urlBusiness = 'https://business.metaverse-solution.vn/api/business';
 
         
         $script = <<<EOT
