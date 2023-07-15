@@ -89,7 +89,9 @@ class Edu_EmployeeController extends AdminController{
         $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
 
         // $url = 'http://127.0.0.1:8000/api/business';
-        $url = env('APP_URL') . '/api/business';
+        // $url = env('APP_URL') . '/api/business';
+        $url = 'https://business.metaverse-solution.vn/api/business';
+        
         
         $script = <<<EOT
 
