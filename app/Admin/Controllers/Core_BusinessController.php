@@ -34,8 +34,6 @@ class Core_BusinessController extends AdminController{
         };
         $grid = new Grid(new Business());
         
-        $grid->column('id', __('ID'));
-        $grid->column('code', __('Mã'));
         $grid->column('type', __('Loại'));
         $grid->column('name', __('Tên'));
         $grid->column('status', __('Trạng thái'))->display($statusFormatter);
@@ -61,8 +59,6 @@ class Core_BusinessController extends AdminController{
         };
         $show = new Show(Business::findOrFail($id));
 
-        $show->field('id', __('ID'));
-        $show->field('code', __('Mã'));
         $show->field('type', __('Loại'));
         $show->field('name', __('Tên'));
         $show->field('status', __('Trạng thái'))->display($statusFormatter);
@@ -79,7 +75,6 @@ class Core_BusinessController extends AdminController{
     protected function form()
     {
         $form = new Form(new Business());
-        $form->text('code', __('Mã'))->required();
         $form->text('type', __('Loại'))->required();
         $form->text('name', __('Tên'))->required();
         $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();

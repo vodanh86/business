@@ -2,13 +2,14 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Branch;
+use App\Http\Models\Core\Business;
 use App\Http\Models\Edu\EduEmployee;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Show;
 use Carbon\Carbon;
-
+use Encore\Admin\Facades\Admin;
 
 class Edu_EmployeeController extends AdminController{
  /**
@@ -16,7 +17,7 @@ class Edu_EmployeeController extends AdminController{
      *
      * @var string
      */
-    protected $title = 'Nhân sự';
+    protected $title = 'Nhân viên';
 
     /**
      * Make a grid builder.
@@ -34,13 +35,38 @@ class Edu_EmployeeController extends AdminController{
         };
         $grid = new Grid(new EduEmployee());
         
-        $grid->column('id', __('ID'));
-        $grid->column('company.name', __('Mã công ty'));
+        $grid->column('business.name', __('Tên doanh nghiệp'));
         $grid->column('name', __('Họ và tên'));
+        $grid->column('phone', __('Số điện thoại'));
         $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $grid;
+    }
+      /**
+     * Make a show builder.
+     *
+     * @param mixed $id
+     * @return Show
+     */
+    protected function detail($id)
+    {
+        $statusFormatter = function ($value) {
+            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
+        };
+        $dateFormatter = function ($updatedAt) {
+            $carbonUpdatedAt = Carbon::parse($updatedAt);
+            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
+        };
+        $show = new Show(EduEmployee::findOrFail($id));
+
+        $show->field('business.name', __('Tên doanh nghiệp'));
+        $show->field('name', __('Họ và tên'));
+        $show->field('phone', __('Số điện thoại'));
+        $show->field('status', __('Trạng thái'))->as($statusFormatter);
+        $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
+        $show->field('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        return $show;
     }
      /**
      * Make a form builder.
@@ -49,39 +75,35 @@ class Edu_EmployeeController extends AdminController{
      */
     protected function form()
     {
-        $companies = Branch::with('companies')->get()->pluck('code', 'id');
+        $business = Business::where('id', Admin::user()->business_id)->first();
         $form = new Form(new EduEmployee());
-        $form->divider('1. Công ty');
-        $form->select('company_code', __('Mã công ty'))->options($companies)->required();
-        $form->text('name', __('Tên công ty'))->disable();
+        $form->divider('1. Doanh nghiệp');
+        $form->hidden('business_id')->value($business->id);
+
+        $form->text('type_business', __('Loại doanh nghiệp'))->disable();
+        $form->text('name_business', __('Tên doanh nghiệp'))->disable();
 
         $form->divider('2. Nhân sự');
         $form->text('name', __('Họ và tên'));
+        $form->mobile('phone', __('Số điện thoại'));
         $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
 
-        // $url = 'http://127.0.0.1:8000/api/contract';
-        // $url = env('APP_URL') . '/api/contract';
+        // $url = 'http://127.0.0.1:8000/api/business';
+        $url = env('APP_URL') . '/api/business';
         
-        // $script = <<<EOT
-        // $(document).on('change', ".contract_id", function () {
-        //     $.get("$url",{q : this.value}, function (data) {
-        //         $("#property").val(data.property);
-        //         $(".customer_type").val(parseInt(data.customer_type)).change();
-        //         $("#tax_number").val(data.tax_number);  
-        //         $("#business_name").val(data.business_name);
-        //         $("#personal_address").val(data.personal_address);
-        //         $("#business_address").val(data.business_address);
-        //         $("#representative").val(data.representative);
-        //         $("#position").val(data.position);
-        //         $("#personal_name").val(data.personal_name);
-        //         $("#id_number").val(data.id_number);  
-        //         $("#issue_place").val(data.issue_place);  
-        //         $("#issue_date").val(data.issue_date); 
-        //     });
-        // });
-        // EOT;
+        $script = <<<EOT
 
-        // Admin::script($script);
+        $(function() {
+            var businessId = $(".business_id").val();
+            
+            $.get("$url",{q : businessId}, function (data) {
+                $("#type_business").val(data.type);
+                $("#name_business").val(data.name);  
+            });
+        });
+        EOT;
+
+        Admin::script($script);
         return $form;
     }
 }

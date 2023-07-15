@@ -38,8 +38,8 @@ class Edu_ClassController extends AdminController{
         $grid = new Grid(new EduClass());
         
         $grid->column('id', __('ID'));
-        $grid->column('business.code', __('Mã doanh nghiệp'));
-        $grid->column('branch.branch_code', __('Mã chi nhánh'));
+        $grid->column('business.name', __('Tên doanh nghiệp'));
+        $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('name', __('Tên lớp'));
         $grid->column('description', __('Mô tả'));
         $grid->column('schedule', __('Lịch học'));
@@ -50,7 +50,7 @@ class Edu_ClassController extends AdminController{
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
         return $grid;
     }
-      /**
+    /**
      * Make a show builder.
      *
      * @param mixed $id
@@ -90,8 +90,8 @@ class Edu_ClassController extends AdminController{
 
         $form = new Form(new EduClass());
         $form->divider('1. Doanh nghiệp&chi nhánh');
-        $form->display('business_code', __('Mã doanh nghiệp'))->default($business->code);
         $form->hidden('business_id')->value($business->id);
+        $form->text('name_business', __('Tên doanh nghiệp'))->disable();
         $form->select('branch_id', __('Mã chi nhánh'))->options()->required();
 
         $form->divider('2. Thông tin lớp học');
@@ -101,28 +101,35 @@ class Edu_ClassController extends AdminController{
         $form->select('teacher', __('Giảng viên'));
         $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
 
-        $url = 'http://127.0.0.1:8000/api/branch';
-        // $url = env('APP_URL') . '/api/contract';
+        // $urlBranch = 'http://127.0.0.1:8000/api/branch';
+        // $urlBusiness = 'http://127.0.0.1:8000/api/business';
+        $urlBranch = env('APP_URL') . '/api/branch';
+        $urlBusiness = env('APP_URL') . '/api/business';
+
         
         $script = <<<EOT
         $(function() {
             var businessId = $(".business_id").val();
             var branchSelect = $(".branch_id");
             var options = {};
-        
-            $.get("$url", { business_id: businessId }, function (branches) {
+            
+            $.get("$urlBusiness",{q : businessId}, function (data) {
+                $("#type_business").val(data.type);
+                $("#name_business").val(data.name);  
+            });
+            $.get("$urlBranch", { business_id: businessId }, function (branches) {
                 $.each(branches, function (index, branch) {
-                    options[branch.id] = branch.branch_code; //Chuyen doi thanh options[ "" -> ""]
+                    options[branch.id] = branch.branch_name;
                 });
                 branchSelect.empty();
                 branchSelect.append($('<option>', {
                     value: '',
                     text: ''
                 }));
-                $.each(options, function (id, branchCode) {
+                $.each(options, function (id, branchName) {
                     branchSelect.append($('<option>', {
                         value: id,
-                        text: branchCode
+                        text: branchName
                     }));
                 });
                 branchSelect.trigger('change');
