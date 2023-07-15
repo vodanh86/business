@@ -37,11 +37,10 @@ class Core_BranchController extends AdminController{
 
         $grid = new Grid(new Branch());
         
-        $grid->column('id', __('ID'));
-        $grid->column('business.code', __('Mã doanh nghiệp'));
-        $grid->column('business.type', __('Loại doanh nghiệp'));
-        $grid->column('branch_code', __('Mã chi nhánh'));
+        $grid->column('business.name', __('Tên doanh nghiệp'));
         $grid->column('branch_name', __('Tên chi nhánh'));
+        $grid->column('address', __('Địa chỉ'));
+        $grid->column('phone', __('Số điện thoại'));
         $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
@@ -65,12 +64,11 @@ class Core_BranchController extends AdminController{
         };
         $show = new Show(Branch::findOrFail($id));
 
-        $show->field('id', __('ID'));
-        $show->field('business.code', __('Mã doanh nghiệp'));
         $show->field('business.type', __('Loại doanh nghiệp'));
-        $show->field('branch_code', __('Mã chi nhánh'));
         $show->field('branch_name', __('Tên chi nhánh'));
-        $show->field('status', __('Trạng thái'))->display($statusFormatter);
+        $show->field('address', __('Địa chỉ'));
+        $show->field('phone', __('Số điện thoại'));
+        $show->field('status', __('Trạng thái'))->as($statusFormatter);
         $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
         $show->field('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         return $show;
@@ -86,19 +84,19 @@ class Core_BranchController extends AdminController{
 
         $form = new Form(new Branch());
         $form->divider('1. Doanh nghiệp');
-        $form->display('business_code', __('Mã doanh nghiệp'))->default($business->code);
         $form->hidden('business_id')->value($business->id);
 
         $form->text('type_business', __('Loại doanh nghiệp'))->disable();
         $form->text('name_business', __('Tên doanh nghiệp'))->disable();
 
         $form->divider('2. Chi nhánh');
-        $form->text('branch_code', __('Mã chi nhánh'))->required();
         $form->text('branch_name', __('Tên chi nhánh'))->required();
+        $form->text('address', __('Địa chỉ'))->required();
+        $form->mobile('phone', __('Số điện thoại'))->required();
         $form->select('status', __('Trạng thái'))->options(array(1 => 'Hoạt động', 2 => 'Không hoạt động'))->required();
 
-        $url = 'http://127.0.0.1:8000/api/business';
-        // $url = env('APP_URL') . '/api/business';
+        // $url = 'http://127.0.0.1:8000/api/business';
+        $url = env('APP_URL') . '/api/business';
         
         $script = <<<EOT
 

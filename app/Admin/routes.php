@@ -23,5 +23,7 @@ Route::group([
     $router->resource('/employee', Edu_EmployeeController::class);
     $router->resource('/classes', Edu_ClassController::class);
     $router->resource('/student', Edu_StudentController::class);
+    $router->resource('/teacher', Edu_TeacherController::class);
+
     
 });
