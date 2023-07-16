@@ -77,13 +77,8 @@ class Edu_EmployeeController extends AdminController{
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
         $form = new Form(new EduEmployee());
-        $form->divider('1. Doanh nghiệp');
         $form->hidden('business_id')->value($business->id);
-
-        $form->text('type_business', __('Loại doanh nghiệp'))->disable();
         $form->text('name_business', __('Tên doanh nghiệp'))->disable();
-
-        $form->divider('2. Nhân sự');
         $form->text('name', __('Họ và tên'));
         $form->mobile('phone', __('Số điện thoại'));
         $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
@@ -99,7 +94,6 @@ class Edu_EmployeeController extends AdminController{
             var businessId = $(".business_id").val();
             
             $.get("$url",{q : businessId}, function (data) {
-                $("#type_business").val(data.type);
                 $("#name_business").val(data.name);  
             });
         });

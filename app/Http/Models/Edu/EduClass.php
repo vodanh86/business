@@ -18,6 +18,10 @@ class EduClass extends Model
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
+    public function teacher()
+    {
+        return $this->belongsTo(EduTeacher::class, 'teacher_id');
+    }
     public function business()
     {
         return $this->belongsTo(Business::class, 'business_id');

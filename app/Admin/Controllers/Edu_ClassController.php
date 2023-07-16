@@ -2,10 +2,9 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Controllers\Constant;
-use App\Http\Models\Core\Branch;
 use App\Http\Models\Core\Business;
 use App\Http\Models\Edu\EduClass;
+use App\Http\Models\Edu\EduTeacher;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
@@ -42,12 +41,12 @@ class Edu_ClassController extends AdminController{
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('name', __('Tên lớp'));
         $grid->column('description', __('Mô tả'));
-        $grid->column('schedule', __('Lịch học'));
-        $grid->column('teacher', __('Giảng viên'));
+        $grid->column('teacher.name', __('Giảng viên'));
         $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
+      
         return $grid;
     }
     /**
@@ -72,7 +71,6 @@ class Edu_ClassController extends AdminController{
         $show->field('branch.code', __('Mã chi nhánh'));
         $show->field('name', __('Tên lớp'));
         $show->field('description', __('Mô tả'));
-        $show->field('schedule', __('Lịch học'));
         $show->field('teacher', __('Giảng viên'));
         $show->field('status', __('Trạng thái'))->display($statusFormatter);
         $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
@@ -87,18 +85,17 @@ class Edu_ClassController extends AdminController{
     protected function form()
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
-
+        $teacher = EduTeacher::where('business_id', Admin::user()->business_id)->pluck("name","id");
         $form = new Form(new EduClass());
         $form->divider('1. Doanh nghiệp&chi nhánh');
         $form->hidden('business_id')->value($business->id);
         $form->text('name_business', __('Tên doanh nghiệp'))->disable();
-        $form->select('branch_id', __('Mã chi nhánh'))->options()->required();
+        $form->select('branch_id', __('Tên chi nhánh'))->options()->required();
 
         $form->divider('2. Thông tin lớp học');
         $form->text('name', __('Tên lớp'));
         $form->text('description', __('Mô tả'));
-        $form->multipleSelect('schedule', __('Lịch học'))->options(Constant::SCHEDULE_CLASS)->setWidth(5, 2)->required();
-        $form->select('teacher', __('Giảng viên'));
+        $form->select('teacher_id', __('Giảng viên'))->options($teacher);
         $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
 
         // $urlBranch = 'http://127.0.0.1:8000/api/branch';
