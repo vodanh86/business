@@ -90,7 +90,6 @@ class Core_BranchController extends AdminController{
         $form->mobile('phone', __('Số điện thoại'))->options(['mask' => '999 999 9999'])->required();
         $form->select('status', __('Trạng thái'))->options(array(1 => 'Hoạt động', 2 => 'Không hoạt động'))->required();
 
-        // $url = 'http://127.0.0.1:8000/api/business';
         // $url = env('APP_URL') . '/api/business';
         $url = 'https://business.metaverse-solution.vn/api/business';
         
