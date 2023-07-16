@@ -2,12 +2,21 @@
 
 namespace App\Http\Models\Edu;
 
+use App\Http\Models\Core\Branch;
+use App\Http\Models\Core\Business;
 use Illuminate\Database\Eloquent\Model;
 
 class EduStudent extends Model
 {
     protected $table = 'edu_student';
 
+    public function business()
+    {
+        return $this->belongsTo(Business::class, 'business_id');
+    } public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
     public function class()
     {
         return $this->belongsTo(EduClass::class, 'class_id');

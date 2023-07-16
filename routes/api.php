@@ -20,5 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('business', 'BusinessController@find');
 Route::get('businessType', 'BusinessTypeController@find');
 Route::get('branch', 'BranchController@find');
+Route::get('class', 'ClassController@find');
 
 

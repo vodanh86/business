@@ -39,8 +39,8 @@ class Core_CommonCodeController extends AdminController{
         
         $grid->column('id', __('ID'));
         $grid->column('business.name', __('Tên doanh nghiệp'));
-        $grid->column('group', __('Nhóm'));
-        $grid->column('type', __('Thể loại'));
+        $grid->column('group', __('Nhóm'))->filter('like');
+        $grid->column('type', __('Thể loại'))->filter('like');
         $grid->column('value', __('Giá trị'));
         $grid->column('description_vi', __('Mô tả tiếng việt'));
         $grid->column('order', __('Sắp xếp'));
@@ -48,6 +48,13 @@ class Core_CommonCodeController extends AdminController{
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         $grid->model()->where('business_id', '=', Admin::user()->business_id)->orderByDesc("id")->orderBy("order");
+        $grid->actions(function ($actions) {
+            $blockDelete = $actions->row->block_delete;
+            if ($blockDelete === 1) {
+                $actions->disableDelete();
+            }
+        });
+
         return $grid;
     }
      /**
@@ -85,15 +92,24 @@ class Core_CommonCodeController extends AdminController{
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
         $form = new Form(new CommonCode());
-
-        $form->hidden('business_id')->value($business->id);
         $form->text('name_business', __('Tên doanh nghiệp'))->disable();
-        $form->text('group', __('Nhóm'));
-        $form->text('type', __('Thể loại'));
-        $form->text('value', __('Giá trị'));
+        if ($form->isEditing()) {
+            $form->tools(function (Form\Tools $tools) {
+                $tools->disableDelete();
+            });
+            $form->text('group', __('Nhóm'))->disable();
+            $form->text('type', __('Thể loại'))->disable();
+            $form->text('value', __('Giá trị'))->disable();
+        }else{
+            $form->text('group', __('Nhóm'));
+            $form->text('type', __('Thể loại'));
+            $form->text('value', __('Giá trị'));
+        }
+        $form->hidden('business_id')->value($business->id);
         $form->text('description_vi', __('Mô tả tiếng việt'));
         $form->text('description_en', __('Mô tả tiếng anh'));
         $form->text('order', __('Sắp xếp'));
+        $form->select('block_delete', __('Chặn xoá'))->options(array(0 => 'Không', 1 => 'Có'))->required();
         $form->select('status', __('Trạng thái'))->options(array(1 => 'Hoạt động', 2 => 'Không hoạt động'))->required();
       
         // $url = 'http://127.0.0.1:8000/api/business';
