@@ -106,6 +106,7 @@ class Edu_StudentController extends AdminController{
     protected function detail($id)
     {
         $show = new Show(EduStudent::findOrFail($id));
+        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
 
         $show->field('business.name', __('Tên doanh nghiệp'));
         $show->field('branch.name', __('Tên chi nhánh'));
@@ -121,7 +122,9 @@ class Edu_StudentController extends AdminController{
         $show->field('grade', __('Khối'));
         $show->field('location', __('Địa chỉ'));
         $show->field('school', __('Trường'));
-        $show->field('status', __('Trạng thái'));
+        $show->field('status', __('Trạng thái'))->as(function ($value) use ($status) {
+            return $status[$value] ?? '';
+        });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
         return $show;
@@ -134,12 +137,9 @@ class Edu_StudentController extends AdminController{
     protected function form()
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
-
-        $allBranches = Branch::all()->pluck('branch_name', 'id');
+        $allBranches = Branch::where('status', 1)->pluck('branch_name', 'id');
         $allClass= EduClass::all()->pluck('name', 'id');
         $branchesBiz = Branch::where('business_id', Admin::user()->business_id)->pluck('branch_name', 'id');
-
-        
         $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
         $school = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "School")->pluck('description_vi','value');
         $channel = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Channel")->pluck('description_vi','value');
@@ -150,7 +150,6 @@ class Edu_StudentController extends AdminController{
         $form = new Form(new EduStudent());
         $form->divider('1. Thông tin cơ bản');
         $form->hidden('business_id')->value($business->id);
-        $form->text('name_business', __('Tên doanh nghiệp'))->disable();
 
         if ($form->isEditing()) {
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->default(function ($id) use ($allBranches) {
@@ -179,23 +178,13 @@ class Edu_StudentController extends AdminController{
         $form->select('status', __('Trạng thái'))->options($status);
       
 
-        $urlBusiness = 'https://business.metaverse-solution.vn/api/business';
-        // $urlClass = 'http://127.0.0.1:8000/api/class';
         $urlClass = 'https://business.metaverse-solution.vn/api/class';
 
-
-        
         $script = <<<EOT
         $(function() {
-            var businessId = $(".business_id").val();
             var branchSelect = $(".branch_id");
             var classSelect = $(".class_id");
             var optionsClass = {};
-            
-            $.get("$urlBusiness",{q : businessId}, function (data) {
-                $("#type_business").val(data.type);
-                $("#name_business").val(data.name);  
-            });
 
             branchSelect.on('change', function() {
                 classSelect.empty();
@@ -203,7 +192,10 @@ class Edu_StudentController extends AdminController{
                 var selectedBranchId = $(this).val();
                 if(!selectedBranchId) return
                 $.get("$urlClass", { branch_id: selectedBranchId }, function (classes) {
-                    $.each(classes, function (index, cls) {
+                    var classesActive = classes.filter(function (cls) {
+                        return cls.status === 1;
+                    });                    
+                    $.each(classesActive, function (index, cls) {
                         optionsClass[cls.id] = cls.name;
                     });
                     classSelect.empty();
