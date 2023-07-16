@@ -3,8 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Models\Core\Business;
+use App\Http\Models\Core\CommonCode;
 use App\Http\Models\Edu\EduClass;
-use App\Http\Models\Edu\EduTeacher;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
@@ -27,22 +27,19 @@ class Edu_ClassController extends AdminController{
      */
     protected function grid()
     {
-        $statusFormatter = function ($value) {
-            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
-        };
+        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
         $grid = new Grid(new EduClass());
         
-        $grid->column('id', __('ID'));
-        $grid->column('business.name', __('Tên doanh nghiệp'));
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('name', __('Tên lớp'));
         $grid->column('description', __('Mô tả'));
-        $grid->column('teacher.name', __('Giảng viên'));
-        $grid->column('status', __('Trạng thái'))->display($statusFormatter);
+        $grid->column('status', __('Trạng thái'))->display(function ($value) use ($status) {
+            return $status[$value] ?? '';
+        });
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
@@ -57,24 +54,17 @@ class Edu_ClassController extends AdminController{
      */
     protected function detail($id)
     {
-        $statusFormatter = function ($value) {
-            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
-        };
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
+        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
         $show = new Show(EduClass::findOrFail($id));
 
-        $show->field('id', __('ID'));
-        $show->field('business.code', __('Mã doanh nghiệp'));
         $show->field('branch.code', __('Mã chi nhánh'));
         $show->field('name', __('Tên lớp'));
         $show->field('description', __('Mô tả'));
-        $show->field('teacher', __('Giảng viên'));
-        $show->field('status', __('Trạng thái'))->display($statusFormatter);
-        $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $show->field('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $show->field('status', __('Trạng thái'))->as(function ($value) use ($status) {
+            return $status[$value] ?? '';
+        });
+        $show->field('created_at', __('Ngày tạo'));
+        $show->field('updated_at', __('Ngày cập nhật'));
         return $show;
     }
      /**
@@ -85,24 +75,17 @@ class Edu_ClassController extends AdminController{
     protected function form()
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
-        $teacher = EduTeacher::where('business_id', Admin::user()->business_id)->pluck("name","id");
+        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
+       
         $form = new Form(new EduClass());
-        $form->divider('1. Doanh nghiệp&chi nhánh');
         $form->hidden('business_id')->value($business->id);
-        $form->text('name_business', __('Tên doanh nghiệp'))->disable();
         $form->select('branch_id', __('Tên chi nhánh'))->options()->required();
-
-        $form->divider('2. Thông tin lớp học');
         $form->text('name', __('Tên lớp'));
         $form->text('description', __('Mô tả'));
-        $form->select('teacher_id', __('Giảng viên'))->options($teacher);
-        $form->select('status', __('Trạng thái'))->options(array(1 => 'ACTIVE', 2 => 'UNACTIVE'))->required();
+        $form->select('status', __('Trạng thái'))->options($status)->required();
 
-        // $urlBranch = 'http://127.0.0.1:8000/api/branch';
-        // $urlBusiness = 'http://127.0.0.1:8000/api/business';
         // $urlBranch = env('APP_URL') . '/api/branch';
         // $urlBusiness = env('APP_URL') . '/api/business';
-
         $urlBranch = 'https://business.metaverse-solution.vn/api/branch';
         $urlBusiness = 'https://business.metaverse-solution.vn/api/business';
 
