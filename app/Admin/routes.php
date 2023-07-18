@@ -27,7 +27,7 @@ Route::group([
     $router->resource('/core/expense-group', Core_ExpenseGroupController::class);
     $router->resource('/core/expense', Core_ExpenseController::class);
     $router->resource('/core/entries', Core_EntriesController::class);
-    $router->resource('/edu/tuitionCollection', Edu_TuitionCollectionController::class);
+    $router->resource('/edu/tuition-collection', Edu_TuitionCollectionController::class);
     $router->resource('/edu/employee', Edu_EmployeeController::class);
     $router->resource('/edu/classes', Edu_ClassController::class);
     $router->resource('/edu/student', Edu_StudentController::class);

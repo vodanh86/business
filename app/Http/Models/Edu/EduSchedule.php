@@ -30,16 +30,13 @@ class EduSchedule extends Model
     {
         return $this->belongsTo(EduClass::class, 'class_id');
     }
-    public function getScheduleClassAttribute($value)
+    public function getDayAttribute($value)
     {
         return explode(',', $value);
     }
 
-    public function setScheduleClassAttribute($value)
+    public function setDayAttribute($value)
     {
-        if (is_array($value)) {
             $this->attributes['day'] = implode(',', $value);
-        }
     }
-	
 }

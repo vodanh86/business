@@ -21,7 +21,6 @@ class Edu_StudentController extends AdminController{
      * @var string
      */
     protected $title = 'Học sinh';
-
     /**
      * Make a grid builder.
      *
@@ -73,12 +72,14 @@ class Edu_StudentController extends AdminController{
             ->where('type', 'Status')
             ->where('value', $value)
             ->first();
-            return $commonCode ? $commonCode->description_vi : '';
+            if ($commonCode) {
+                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
+            }
+            return '';
         };
         
         $grid = new Grid(new EduStudent());
 
-        $grid->column('business.name', __('Tên doanh nghiệp'))->width(150);
         $grid->column('branch.branch_name', __('Tên chi nhánh'))->width(150);
         $grid->column('class.name', __('Tên lớp'))->width(150);
         $grid->column('channel', __('Kênh'))->display($channel);
@@ -95,6 +96,10 @@ class Edu_StudentController extends AdminController{
         $grid->column('status', __('Trạng thái'))->display($status);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $grid->fixColumns(0, 0);
+        $grid->disableExport();
+       
+        
         return $grid;
     }
      /**
@@ -108,7 +113,6 @@ class Edu_StudentController extends AdminController{
         $show = new Show(EduStudent::findOrFail($id));
         $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
 
-        $show->field('business.name', __('Tên doanh nghiệp'));
         $show->field('branch.name', __('Tên chi nhánh'));
         $show->field('class.name', __('Tên lớp'));
         $show->field('channel', __('Kênh'));
@@ -137,8 +141,6 @@ class Edu_StudentController extends AdminController{
     protected function form()
     {
         $business = Business::where('id', Admin::user()->business_id)->first();
-        $allBranches = Branch::where('status', 1)->pluck('branch_name', 'id');
-        $allClass= EduClass::all()->pluck('name', 'id');
         $branchesBiz = Branch::where('business_id', Admin::user()->business_id)->pluck('branch_name', 'id');
         $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
         $school = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "School")->pluck('description_vi','value');
@@ -150,18 +152,8 @@ class Edu_StudentController extends AdminController{
         $form = new Form(new EduStudent());
         $form->divider('1. Thông tin cơ bản');
         $form->hidden('business_id')->value($business->id);
-
-        if ($form->isEditing()) {
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->default(function ($id) use ($allBranches) {
-                return $id ? [$id => $allBranches[$id]] : $allBranches;
-            });
-            $form->select('class_id', __('Tên lớp học'))->options()->default(function ($id) use ($allClass) {
-                return $id ? [$id => $allClass[$id]] : $allClass;
-            });
-        }else{
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
-            $form->select('class_id', __('Tên lớp học'))->options()->required();
-        }
+        $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
+        $form->select('class_id', __('Tên lớp học'))->options()->required();
 
         $form->divider('2. Thông tin học sinh');
         $form->select('channel', __('Kênh'))->options($channel);
@@ -185,7 +177,6 @@ class Edu_StudentController extends AdminController{
             var branchSelect = $(".branch_id");
             var classSelect = $(".class_id");
             var optionsClass = {};
-
             branchSelect.on('change', function() {
                 classSelect.empty();
                 optionsClass = {};

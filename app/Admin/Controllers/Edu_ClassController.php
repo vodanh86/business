@@ -27,7 +27,16 @@ class Edu_ClassController extends AdminController{
      */
     protected function grid()
     {
-        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
+        $status = function ($value) {
+            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
+            ->where('type', 'Status')
+            ->where('value', $value)
+            ->first();
+            if ($commonCode) {
+                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
+            }
+            return '';
+        };
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
@@ -37,9 +46,7 @@ class Edu_ClassController extends AdminController{
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('name', __('Tên lớp'));
         $grid->column('description', __('Mô tả'));
-        $grid->column('status', __('Trạng thái'))->display(function ($value) use ($status) {
-            return $status[$value] ?? '';
-        });
+        $grid->column('status', __('Trạng thái'))->display($status);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
         $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
