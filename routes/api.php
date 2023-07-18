@@ -21,5 +21,11 @@ Route::get('business', 'BusinessController@find');
 Route::get('businessType', 'BusinessTypeController@find');
 Route::get('branch', 'BranchController@find');
 Route::get('class', 'ClassController@find');
+Route::get('class/get-by-id', 'ClassController@getById');
+Route::get('student', 'StudentController@find');
+Route::get('schedule', 'ScheduleController@find');
+Route::get('schedule/get-by-id', 'ScheduleController@getById');
+
+
 
 

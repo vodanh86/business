@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Models\Edu\EduSchedule;
 use Illuminate\Http\Request;
-use App\Http\Models\Edu\EduClass;
 
-class ClassController extends Controller
+class ScheduleController extends Controller
 {
     public function find(Request $request)
     {
         $branchId = $request->get('branch_id');
-        $class = EduClass::where('branch_id', $branchId)->get();
-        return $class;
+        $schedule = EduSchedule::where('branch_id', $branchId)->get();
+        return $schedule;
     }
     public function getById(Request $request)
     {
         $id = $request->get('q');
-        $class = EduClass::find($id);
-        return $class;
+        $schedule = EduSchedule::find($id);
+        return $schedule;
     }
 }

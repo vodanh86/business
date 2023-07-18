@@ -275,7 +275,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => env('ADMIN_SKIN', 'skin-blue-light'),
+    'skin' => env('ADMIN_SKIN', 'skin-black'),
 
     /*
     |--------------------------------------------------------------------------
@@ -405,8 +405,10 @@ return [
     |
     */
     'extensions' => [
+        'material-ui' => [
+            'enable' => false
+        ]
     ],
-    
     'model_button_styles' => [
         'view'    => 'btn btn-outline-primary',
         'edit'    => 'btn btn-outline-primary',
