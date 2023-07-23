@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Http\Models\Core\Account;
 use App\Http\Models\Core\Business;
 use App\Http\Models\Core\Entries;
 use App\Http\Models\Edu\EduTeacher;
@@ -28,24 +29,21 @@ class Core_EntriesController extends AdminController
      */
     protected function grid()
     {
-        $statusFormatter = function ($value) {
-            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
-        };
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
         };
+
         $grid = new Grid(new Entries());
 
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('transaction.name', __('Mã giao dịch'));
-        $grid->column('account', __('Tài khoản'));
+        $grid->column('account', __('Số tài khoản'));
+        $grid->column('account_name', __('Tên tài khoản'));
         $grid->column('amount', __('Số tiền'));
         $grid->column('value_date', __('Ngày thực hiện'));
         $grid->column('trans_reference', __('Tham chiếu giao dịch'));
-        $grid->column('status', __('Trạng thái'))->display($statusFormatter);
         $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
         $grid->disableCreateButton();
 
@@ -77,6 +75,7 @@ class Core_EntriesController extends AdminController
                 $group->ngt('Không lớn hơn');
                 $group->equal('Bằng với');
             });
+
             $filter->group('amount', __('Số tiền'), function ($group) {
                 $group->gt('Lớn hơn');
                 $group->lt('Nhỏ hơn');
@@ -110,9 +109,6 @@ class Core_EntriesController extends AdminController
      */
     protected function detail($id)
     {
-        $statusFormatter = function ($value) {
-            return $value == 1 ? 'ACTIVE' : 'UNACTIVE';
-        };
         $dateFormatter = function ($updatedAt) {
             $carbonUpdatedAt = Carbon::parse($updatedAt);
             return $carbonUpdatedAt->format('d/m/Y - H:i:s');
@@ -125,9 +121,16 @@ class Core_EntriesController extends AdminController
         $show->field('amount', __('Số tiền'));
         $show->field('value_date', __('Ngày thực hiện'));
         $show->field('trans_reference', __('Tham chiếu giao dịch'));
-        $show->field('status', __('Trạng thái'))->display($statusFormatter);
+        $show->field('description', __('Mô tả'));
+        // $show->field('description', __('Mô tả'))->title()->as(function ($title) {
+        //     return "<textarea>$title</textarea>";
+        // });
         $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $show->field('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableEdit();
+                $tools->disableDelete();
+            });;
         return $show;
     }
 }
