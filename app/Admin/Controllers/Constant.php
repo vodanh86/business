@@ -2,6 +2,9 @@
 
 namespace App\Admin\Controllers;
 
+use App\Http\Models\Core\Business;
+use Encore\Admin\Facades\Admin;
+
 abstract class Constant
 {
     const SCHEDULE_CLASS = array(   "Thứ 2" => "Thứ 2", 

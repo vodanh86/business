@@ -9,8 +9,8 @@ class StudentController extends Controller
 {
     public function find(Request $request)
     {
-        $classId = $request->get('class_id');
-        $class = EduStudent::where('class_id', $classId)->get();
-        return $class;
+        $scheduleId = $request->get('schedule_id');
+        $schedule = EduStudent::where('schedule_id', $scheduleId)->get();
+        return $schedule;
     }
 }
