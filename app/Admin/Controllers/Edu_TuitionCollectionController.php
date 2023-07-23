@@ -17,7 +17,8 @@ use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 
 class Edu_TuitionCollectionController extends AdminController{
- /**
+
+    /**
      * Title for current resource.
      *
      * @var string
@@ -31,39 +32,40 @@ class Edu_TuitionCollectionController extends AdminController{
      */
     protected function grid()
     {
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
-        $moneyFormatter = function ($money) {
-            return number_format($money, 2, ',', ' ') . " VND";
-        };
-        $recordStatus = function ($value) {
-            if (array_key_exists($value, Constant::RECORD_STATUS)) {
-                return Constant::RECORD_STATUS[$value];
-            } else {
-                return '';
-            }
-        };
         $grid = new Grid(new EduTuitionCollection());
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('schedule.name', __('Lịch học'));
         $grid->column('student.name', __('Học sinh'));
         $grid->column('processing_date', __('Ngày nghiệm thu'));
-        $grid->column('value_date', __('Ngày nộp tiền'))->display($dateFormatter);
+        $grid->column('value_date', __('Ngày nộp tiền'))->display(function ($valueDate) {
+            return ConstantHelper::dateFormatter($valueDate);
+        });
         $grid->column('amount', __('Số lượng'));
-        $grid->column('unit_price', __('Đơn giá'))->display($moneyFormatter);
-        $grid->column('value', __('Giá trị'))->display($moneyFormatter);
-        $grid->column('next_date', __('Ngày tiếp theo'))->display($dateFormatter);
+        $grid->column('unit_price', __('Đơn giá'))->display(function ($unitPrice) {
+            return ConstantHelper::moneyFormatter($unitPrice);
+        });
+        $grid->column('value', __('Giá trị'))->display(function ($value) {
+            return ConstantHelper::moneyFormatter($value);
+        });
+        $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
+            return ConstantHelper::dateFormatter($nextDate);
+        });
         $grid->column('account.number', __('Số tài khoản'));
         $grid->column('description', __('Mô tả'));
-        $grid->column('record_status', __('Trạng thái'))->display($recordStatus);
-        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $grid->column('status', __('Trạng thái'))->display(function ($value) {
+            return Constant::RECORD_STATUS[$value] ?? '';
+        });
+        $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
+            return ConstantHelper::dateFormatter($createdAt);
+        });
+        $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
+            return ConstantHelper::dateFormatter($updatedAt);
+        });
         $grid->fixColumns(0, 0);
 
         return $grid;
     }
+
      /**
      * Make a show builder.
      *
@@ -72,40 +74,36 @@ class Edu_TuitionCollectionController extends AdminController{
      */
     protected function detail($id)
     {
-        $moneyFormatter = function ($money) {
-            return number_format($money, 2, ',', ' ') . " VND";
-        };
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
-        $recordStatus = function ($value) {
-            if (array_key_exists($value, Constant::RECORD_STATUS)) {
-                return Constant::RECORD_STATUS[$value];
-            } else {
-                return '';
-            }
-        };
-
         $show = new Show(EduTuitionCollection::findOrFail($id));
 
         $show->field('branch.branch_name', __('Tên chi nhánh'));
         $show->field('schedule.name', __('Lịch học'));
         $show->field('student.name', __('Học sinh'));
         $show->field('processing_date', __('Ngày nghiệm thu'));
-        $show->field('value_date', __('Ngày nộp tiền'))->as($dateFormatter);
+        $show->field('value_date', __('Ngày nộp tiền'))->as(function ($valueDate) {
+            return ConstantHelper::dateFormatter($valueDate);
+        });
         $show->field('amount', __('Số lượng'));
-        $show->field('unit_price', __('Đơn giá'))->as($moneyFormatter);
-        $show->field('value', __('Giá trị'))->as($moneyFormatter);
-        $show->field('next_date', __('Ngày tiếp theo'))->as($dateFormatter);
+        $show->field('unit_price', __('Đơn giá'))->as(function ($unitPrice) {
+            return ConstantHelper::moneyFormatter($unitPrice);
+        });
+        $show->field('value', __('Giá trị'))->as(function ($value) {
+            return ConstantHelper::moneyFormatter($value);
+        });
+        $show->field('next_date', __('Ngày tiếp theo'))->as(function ($nextDate) {
+            return ConstantHelper::dateFormatter($nextDate);
+        });
         $show->field('account_id', __('Số tài khoản'));
-        $show->field('description', __('Mô tả'))->width(150);
-        $show->field('record_status', __('Trạng thái'))->as($$recordStatus);
+        $show->field('description', __('Mô tả'));
+        $show->field('status', __('Trạng thái'))->as(function ($status) {
+            return ConstantHelper::transactionRecordStatus($status);
+        });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
        
         return $show;
     }
+    
      /**
      * Make a form builder.
      *
@@ -113,53 +111,33 @@ class Edu_TuitionCollectionController extends AdminController{
      */
     protected function form()
     {
-        $recordStatus = function ($value) {
-            if (array_key_exists($value, Constant::RECORD_STATUS)) {
-                return Constant::RECORD_STATUS[$value];
-            } else {
-                return '';
-            }
-        };
+        $business = (new UtilsCommonHelper)->currentBusiness();
+        $branchs = (new UtilsCommonHelper)->optionsBranch();
 
-        $business = Business::where('id', Admin::user()->business_id)->first();
         $account = Account::where('business_id', Admin::user()->business_id)->pluck('number', 'id');
-        $branchesBiz = Branch::where('business_id', Admin::user()->business_id)->pluck('branch_name', 'id');
-        $allClass= EduClass::all()->pluck('name', 'id');
-        $allStudent= EduStudent::all()->pluck('name', 'id');
-        $allSchedule = EduSchedule::all()->pluck('name', 'id');
 
 
         $form = new Form(new EduTuitionCollection());
-        $form->divider('1. Thông tin cơ bản');
         $form->hidden('business_id')->value($business->id);
 
         if ($form->isEditing()) {
-
             $id = request()->route()->parameter('tuition_collection');
-            $model = $form->model()->find($id);
-            // dd($model);
+            $branchId = $form->model()->find($id)->getOriginal("branch_id");
+            $schedules = (new UtilsCommonHelper)->optionsScheduleByBranchId($branchId);
+            $scheduleId = $form->model()->find($id)->getOriginal("schedule_id");
+            $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
+            $studentId = $form->model()->find($id)->getOriginal("student_id");
 
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
-            $form->select('schedule_id', __('Tên lịch học'))->options($allSchedule)->default(function ($id) {
-                $schedule = EduSchedule::find($id);
-                if ($schedule) {
-                    return [$schedule->id => $schedule->name];
-                }
-            });
-            $form->select('student_id', __('Tên học sinh'))->options($allStudent)->default(function ($id) {
-                $student = EduStudent::find($id);
-                if ($student) {
-                    return [$student->id => $student->name];
-                }
-            });
+            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId);
+            $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId);
+            $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId);
         }else{
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
+            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();
             $form->text('class_name', __('Tên lớp học'))->disable()->required();
             $form->select('student_id', __('Tên học sinh'))->options()->required();
         }
 
-        $form->divider('2. Thông tin thu học phí');
         $form->date('processing_date', __('Ngày đóng tiền'))->required();
         $form->date('value_date', __('Ngày bắt đầu học'))->required();
         $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required();
@@ -181,11 +159,12 @@ class Edu_TuitionCollectionController extends AdminController{
             $form->select('record_status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
         }
         
-
         $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
         $urlScheduleById = 'https://business.metaverse-solution.vn/api/schedule/get-by-id';
         $urlClassById = 'https://business.metaverse-solution.vn/api/class/get-by-id';
         $urlStudent = 'https://business.metaverse-solution.vn/api/student';
+        // $urlStudent = 'http://127.0.0.1:8000/api/student';
+
 
         $script = <<<EOT
         $(function() {
@@ -252,7 +231,7 @@ class Edu_TuitionCollectionController extends AdminController{
                         $("#class_name").val(cls.name)
                     });
 
-                    $.get("$urlStudent", { class_id: schedule.class_id }, function (students) {
+                    $.get("$urlStudent", { schedule_id: schedule.class_id }, function (students) {
                         var studentsActive = students.filter(function (student) {
                             return student.status === 1 && student.class_id === schedule.class_id
                         });      

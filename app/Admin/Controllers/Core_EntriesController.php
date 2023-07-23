@@ -2,15 +2,10 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Account;
-use App\Http\Models\Core\Business;
 use App\Http\Models\Core\Entries;
-use App\Http\Models\Edu\EduTeacher;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
-use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 
 class Core_EntriesController extends AdminController
@@ -29,21 +24,19 @@ class Core_EntriesController extends AdminController
      */
     protected function grid()
     {
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
-
         $grid = new Grid(new Entries());
 
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('transaction.name', __('Mã giao dịch'));
-        $grid->column('account', __('Số tài khoản'));
-        $grid->column('account_name', __('Tên tài khoản'));
+        $grid->column('account_id', __('Số tài khoản'))->display(function ($accountNumber) {
+            return UtilsCommonHelper::bankAccountGridFormatter($accountNumber);
+        });
         $grid->column('amount', __('Số tiền'));
         $grid->column('value_date', __('Ngày thực hiện'));
         $grid->column('trans_reference', __('Tham chiếu giao dịch'));
-        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
+        $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
+            return ConstantHelper::dateFormatter($createdAt);
+        });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
         $grid->disableCreateButton();
 
@@ -101,6 +94,7 @@ class Core_EntriesController extends AdminController
 
         return $grid;
     }
+
     /**
      * Make a show builder.
      *
@@ -109,23 +103,18 @@ class Core_EntriesController extends AdminController
      */
     protected function detail($id)
     {
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
+       
         $show = new Show(Entries::findOrFail($id));
-
         $show->field('branch.branch_name', __('Tên chi nhánh'));
         $show->field('transaction.name', __('Mã giao dịch'));
-        $show->field('account', __('Tài khoản'));
+        $show->field('account_id', __('Tài khoản'))->as(function ($accountNumber) {
+            return UtilsCommonHelper::bankAccountDetailFormatter($accountNumber);
+        });
         $show->field('amount', __('Số tiền'));
         $show->field('value_date', __('Ngày thực hiện'));
         $show->field('trans_reference', __('Tham chiếu giao dịch'));
         $show->field('description', __('Mô tả'));
-        // $show->field('description', __('Mô tả'))->title()->as(function ($title) {
-        //     return "<textarea>$title</textarea>";
-        // });
-        $show->field('created_at', __('Ngày tạo'))->display($dateFormatter);
+        $show->field('created_at', __('Ngày tạo'));
         $show->panel()
             ->tools(function ($tools) {
                 $tools->disableEdit();
