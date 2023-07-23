@@ -153,8 +153,20 @@ class Edu_StudentController extends AdminController{
         $form->divider('1. Thông tin cơ bản');
         $form->hidden('business_id')->value($business->id);
         $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
-        $form->select('class_id', __('Tên lớp học'))->options()->required();
-
+        if ($form->isEditing()) {
+            $classList = EduClass::where('branch_id', Admin::user()->business_id)->where('status', 1)->pluck('name', 'id')->toArray();
+            $editingClassId = $form->model()->class_id;
+            dd($editingClassId);
+            if ($editingClassId && !array_key_exists($editingClassId, $classList)) {
+                $class = EduClass::find($editingClassId);
+                if ($class) {
+                    $classList[$editingClassId] = $class->name;
+                }
+            }
+            $form->select('class_id', __('Tên lớp học'))->options($classList)->required();
+        } else {
+            $form->select('class_id', __('Tên lớp học'))->options()->required();
+        }
         $form->divider('2. Thông tin học sinh');
         $form->select('channel', __('Kênh'))->options($channel);
         $form->select('wom', __('WOM'))->options($wom);
