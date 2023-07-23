@@ -46,6 +46,7 @@ class Core_ExpenseController extends AdminController{
             return ConstantHelper::dateFormatter($updatedAt);
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
+        $grid->disableExport();
 
         return $grid;
     }

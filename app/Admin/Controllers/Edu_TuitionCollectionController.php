@@ -3,17 +3,11 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Models\Core\Account;
-use App\Http\Models\Core\Branch;
-use App\Http\Models\Core\Business;
-use App\Http\Models\Edu\EduClass;
-use App\Http\Models\Edu\EduSchedule;
-use App\Http\Models\Edu\EduStudent;
 use App\Http\Models\Edu\EduTuitionCollection;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
-use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 
 class Edu_TuitionCollectionController extends AdminController{
@@ -50,10 +44,11 @@ class Edu_TuitionCollectionController extends AdminController{
         $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
             return ConstantHelper::dateFormatter($nextDate);
         });
-        $grid->column('account.number', __('Số tài khoản'));
-        $grid->column('description', __('Mô tả'));
+        $grid->column('account_id', __('Số tài khoản'))->display(function ($accountNumber) {
+            return UtilsCommonHelper::bankAccountGridFormatter($accountNumber);
+        });
         $grid->column('status', __('Trạng thái'))->display(function ($value) {
-            return Constant::RECORD_STATUS[$value] ?? '';
+            return ConstantHelper::transactionGridRecordStatus($value);
         });
         $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
             return ConstantHelper::dateFormatter($createdAt);
@@ -93,10 +88,12 @@ class Edu_TuitionCollectionController extends AdminController{
         $show->field('next_date', __('Ngày tiếp theo'))->as(function ($nextDate) {
             return ConstantHelper::dateFormatter($nextDate);
         });
-        $show->field('account_id', __('Số tài khoản'));
+        $show->field('account_id', __('Tài khoản'))->as(function ($accountNumber) {
+            return UtilsCommonHelper::bankAccountDetailFormatter($accountNumber);
+        });
         $show->field('description', __('Mô tả'));
         $show->field('status', __('Trạng thái'))->as(function ($status) {
-            return ConstantHelper::transactionRecordStatus($status);
+            return ConstantHelper::transactionDetailRecordStatus($status);
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
@@ -113,13 +110,10 @@ class Edu_TuitionCollectionController extends AdminController{
     {
         $business = (new UtilsCommonHelper)->currentBusiness();
         $branchs = (new UtilsCommonHelper)->optionsBranch();
-
-        $account = Account::where('business_id', Admin::user()->business_id)->pluck('number', 'id');
-
+        $account = (new UtilsCommonHelper)->bankAccountFormFormatter();
 
         $form = new Form(new EduTuitionCollection());
         $form->hidden('business_id')->value($business->id);
-
         if ($form->isEditing()) {
             $id = request()->route()->parameter('tuition_collection');
             $branchId = $form->model()->find($id)->getOriginal("branch_id");
@@ -163,8 +157,6 @@ class Edu_TuitionCollectionController extends AdminController{
         $urlScheduleById = 'https://business.metaverse-solution.vn/api/schedule/get-by-id';
         $urlClassById = 'https://business.metaverse-solution.vn/api/class/get-by-id';
         $urlStudent = 'https://business.metaverse-solution.vn/api/student';
-        // $urlStudent = 'http://127.0.0.1:8000/api/student';
-
 
         $script = <<<EOT
         $(function() {

@@ -40,7 +40,7 @@ class Core_TransferController extends AdminController
         });
         $grid->column('description', __('Mô tả'));
         $grid->column('status', __('Trạng thái'))->display(function ($value) {
-            return Constant::RECORD_STATUS[$value] ?? '';
+            return ConstantHelper::transactionGridRecordStatus($value);
         });
         $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
             return ConstantHelper::dateFormatter($createdAt);
@@ -58,6 +58,8 @@ class Core_TransferController extends AdminController
                 $actions->disableDelete();
             }
         });
+        $grid->fixColumns(0,0);
+
         return $grid;
     }
 
@@ -84,7 +86,7 @@ class Core_TransferController extends AdminController
         });
         $show->field('description', __('Mô tả'));
         $show->field('status', __('Trạng thái'))->as(function ($status) {
-            return ConstantHelper::transactionRecordStatus($status);
+            return ConstantHelper::transactionDetailRecordStatus($status);
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));

@@ -29,7 +29,6 @@ class Core_BranchController extends AdminController
     {
         $grid = new Grid(new Branch());
 
-        $grid->column('business.name', __('Tên doanh nghiệp'));
         $grid->column('branch_name', __('Tên chi nhánh'));
         $grid->column('address', __('Địa chỉ'));
         $grid->column('phone', __('Số điện thoại'));
@@ -43,6 +42,8 @@ class Core_BranchController extends AdminController
             return ConstantHelper::dateFormatter($createdAt);
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
+        $grid->fixColumns(0,0);
+        $grid->disableExport();
         return $grid;
     }
 
@@ -56,7 +57,6 @@ class Core_BranchController extends AdminController
     {
         $show = new Show(Branch::findOrFail($id));
 
-        $show->field('business.type', __('Loại doanh nghiệp'));
         $show->field('branch_name', __('Tên chi nhánh'));
         $show->field('address', __('Địa chỉ'));
         $show->field('phone', __('Số điện thoại'));
