@@ -45,6 +45,7 @@ class Core_CommonCodeController extends AdminController
             return ConstantHelper::dateFormatter($updatedAt);
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id)->orderByDesc("id")->orderBy("order");
+        $grid->disableExport();
 
         $grid->actions(function ($actions) {
             $blockDelete = $actions->row->block_delete;
@@ -112,12 +113,12 @@ class Core_CommonCodeController extends AdminController
             $form->text('type', __('Thể loại'))->disable();
             $form->text('value', __('Giá trị'))->disable();
         } else {
-            $form->text('group', __('Nhóm'));
-            $form->text('type', __('Thể loại'));
-            $form->text('value', __('Giá trị'));
+            $form->text('group', __('Nhóm'))->help('Yêu cầu tên mã nhóm - Ví dụ(Edu)')->required();
+            $form->text('type', __('Thể loại'))->help('Yêu cầu tên thể loại - Ví dụ(School)')->required();
+            $form->text('value', __('Giá trị'))->help('Yêu cầu giá trị - Ví dụ(1: VIN, 2:FPT)')->required();
         }
-        $form->text('description_vi', __('Mô tả tiếng việt'));
-        $form->text('description_en', __('Mô tả tiếng anh'));
+        $form->text('description_vi', __('Mô tả tiếng việt'))->required();
+        $form->text('description_en', __('Mô tả tiếng anh'))->required();
         $form->text('order', __('Sắp xếp'));
         $form->select('block_delete', __('Chặn xoá'))->options(array(0 => 'Không', 1 => 'Có'))->required();
         $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault)->required();

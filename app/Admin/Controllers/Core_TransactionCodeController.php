@@ -42,7 +42,7 @@ class Core_TransactionCodeController extends AdminController{
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
-
+        $grid->disableExport();
         return $grid;
     }
 

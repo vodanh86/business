@@ -47,7 +47,8 @@ class Core_TxnTypeConditionController extends AdminController{
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
-
+        $grid->fixColumns(0,0);
+        $grid->disableExport();
         return $grid;
     }
 

@@ -405,8 +405,27 @@ return [
     |
     */
     'extensions' => [
-        'material-ui' => [
-            'enable' => false
+        'custom-actions-button' => [
+            "enable" => true,
+  
+            "view" => [
+                "label" => "Detail",
+                "icon"  => "fa fa-eye",
+                "class" => "btn btn-sm btn-secondary"
+            ],
+  
+            "edit" => [
+                "label" => "Edit",
+                "icon"  => "fa fa-edit",
+                "class" => "btn btn-sm btn-secondary"
+            ],
+  
+            "delete" => [
+                "label" => "",
+                "icon"  => "fa fa-trash",
+                "class" => "btn btn-sm btn-secondary"
+            ]
+  
         ]
     ],
     'model_button_styles' => [

@@ -49,7 +49,7 @@ class Edu_ExpenditureController extends AdminController
             return ConstantHelper::dateFormatter($valueDate);
         });
         $grid->column('status', __('Trạng thái'))->display(function ($value) {
-            return Constant::RECORD_STATUS[$value] ?? '';
+            return ConstantHelper::transactionGridRecordStatus($value);
         });
         $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
             return ConstantHelper::dateFormatter($createdAt);
@@ -58,6 +58,7 @@ class Edu_ExpenditureController extends AdminController
             return ConstantHelper::dateFormatter($updatedAt);
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
+        $grid->fixColumns(0,0);
         return $grid;
     }
 
@@ -85,7 +86,7 @@ class Edu_ExpenditureController extends AdminController
         $show->field('value_date', __('Ngày đóng'));
         $show->field('description', __('Mô tả'));
         $show->field('status', __('Trạng thái'))->as(function ($status) {
-            return ConstantHelper::transactionRecordStatus($status);
+            return ConstantHelper::transactionDetailRecordStatus($status);
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));

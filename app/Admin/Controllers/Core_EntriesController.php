@@ -31,7 +31,9 @@ class Core_EntriesController extends AdminController
         $grid->column('account_id', __('Số tài khoản'))->display(function ($accountNumber) {
             return UtilsCommonHelper::bankAccountGridFormatter($accountNumber);
         });
-        $grid->column('amount', __('Số tiền'));
+        $grid->column('amount', __('Số tiền'))->display(function ($money) {
+            return ConstantHelper::moneyFormatter($money);
+        });
         $grid->column('value_date', __('Ngày thực hiện'));
         $grid->column('trans_reference', __('Tham chiếu giao dịch'));
         $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
@@ -110,7 +112,9 @@ class Core_EntriesController extends AdminController
         $show->field('account_id', __('Tài khoản'))->as(function ($accountNumber) {
             return UtilsCommonHelper::bankAccountDetailFormatter($accountNumber);
         });
-        $show->field('amount', __('Số tiền'));
+        $show->field('amount', __('Số tiền'))->as(function ($amount) {
+            return ConstantHelper::moneyFormatter($amount);
+        });
         $show->field('value_date', __('Ngày thực hiện'));
         $show->field('trans_reference', __('Tham chiếu giao dịch'));
         $show->field('description', __('Mô tả'));

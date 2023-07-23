@@ -39,6 +39,7 @@ class Core_BusinessController extends AdminController{
             return ConstantHelper::dateFormatter($updatedAt);
         });  
         $grid->model()->orderBy('id', 'desc');
+        $grid->disableExport();
         return $grid;
     }
 
