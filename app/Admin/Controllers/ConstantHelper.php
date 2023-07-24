@@ -8,12 +8,16 @@ class ConstantHelper
 {
     public static function dateFormatter($dateIn)
     {
-        $carbonDateIn = Carbon::parse($dateIn);
-        return $dateIn === null ? "" : $carbonDateIn->format('d/m/Y - H:i:s');
+        if ($dateIn === null) {
+            return "";
+        }
+    
+        $carbonDateIn = Carbon::parse($dateIn)->setTimezone('Asia/Bangkok');
+        return $carbonDateIn->format('d/m/Y - H:i:s');
     }
     public static function moneyFormatter($money)
     {
-        return number_format($money, 0, ',', ' ') . " VND";
+        return number_format($money, 0, ',', ',') . " VND";
     }
     public static function transactionDetailRecordStatus($value)
     {

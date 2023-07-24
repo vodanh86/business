@@ -38,7 +38,6 @@ class Core_TransferController extends AdminController
         $grid->column('amount', __('Số tiền'))->display(function ($money) {
             return ConstantHelper::moneyFormatter($money);
         });
-        $grid->column('description', __('Mô tả'));
         $grid->column('status', __('Trạng thái'))->display(function ($value) {
             return ConstantHelper::transactionGridRecordStatus($value);
         });
