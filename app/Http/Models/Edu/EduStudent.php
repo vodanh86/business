@@ -17,9 +17,9 @@ class EduStudent extends Model
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
-    public function class()
+    public function schedule()
     {
-        return $this->belongsTo(EduClass::class, 'class_id');
+        return $this->belongsTo(EduSchedule::class, 'schedule_id');
     }
 
 	protected $hidden = [

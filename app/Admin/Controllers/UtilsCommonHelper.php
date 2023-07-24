@@ -22,6 +22,15 @@ class UtilsCommonHelper
             ->pluck($description, $value);
         return $commonCode;
     }
+    public static function commonCodeGridFormatter($group, $type, $description, $value)
+    {
+        $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
+            ->where('group', $group)
+            ->where('type', $type)
+            ->where('value', $value)
+            ->first();
+            return $commonCode ? $commonCode->$description : '';
+    }
     //Kiem tra ten lai(doi lai)
     public static function statusFormatter($value, $group, $isGrid)
     {
