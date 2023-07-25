@@ -2,13 +2,10 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Account;
 use App\Http\Models\Core\Branch;
 use App\Http\Models\Core\Business;
 use App\Http\Models\Core\CommonCode;
-use App\Http\Models\Edu\EduClass;
 use App\Http\Models\Edu\EduSchedule;
-use App\Http\Models\Edu\EduStudent;
 use App\Http\Models\Edu\EduStudentReport;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -18,7 +15,8 @@ use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 
 class Edu_StudentReportController extends AdminController{
- /**
+
+    /**
      * Title for current resource.
      *
      * @var string
@@ -32,45 +30,33 @@ class Edu_StudentReportController extends AdminController{
      */
     protected function grid()
     {
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
-        $status = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Status')
-            ->where('value', $value)
-            ->first();
-            if ($commonCode) {
-                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
-            }
-            return '';
-        };
-        $reportType = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'ReportType')
-            ->where('value', $value)
-            ->first();
-            return $commonCode ? $commonCode->description_vi : '';
-        };
         $reportDetailURL = function ($value) {
-            return "<a href='http://127.0.0.1:8000/admin/edu/report-detail/$value' target='_blank'>Báo cáo chi tiết</a>";
+            return "<a href='http://127.0.0.1:8000/admin/edu/report-detail/$value' style='text-decoration: underline' target='_blank'>Báo cáo chi tiết</a>";
         };
 
         $grid = new Grid(new EduStudentReport());
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('schedule.name', __('Lịch học'));
-        $grid->column('type', __('Loại báo cáo'))->display($reportType);
-        $grid->column('report_date', __('Ngày báo cáo'))->display($dateFormatter);
+        $grid->column('type', __('Loại báo cáo'))->display(function($type){
+            return UtilsCommonHelper::commonCodeGridFormatter("Core", "ReportType", "description_vi", $type);
+        });
+        $grid->column('report_date', __('Ngày báo cáo'))->display(function ($reportDate) {
+            return ConstantHelper::dateFormatter($reportDate);
+        });
         $grid->column('lesson_name', __('Tên bài giảng'));
         $grid->column('id', __('Báo cáo chi tiết'))->display($reportDetailURL);
-        $grid->column('status', __('Trạng thái'))->display($status);
-        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
+            return ConstantHelper::dateFormatter($createdAt);
+        });
+        $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($createdAt) {
+            return ConstantHelper::dateFormatter($createdAt);
+        });
+        $grid->model()->where('business_id', '=', Admin::user()->business_id);
         $grid->fixColumns(0, 0);
 
         return $grid;
     }
+
      /**
      * Make a show builder.
      *
@@ -79,16 +65,6 @@ class Edu_StudentReportController extends AdminController{
      */
     protected function detail($id)
     {
-        $status = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Status')
-            ->where('value', $value)
-            ->first();
-            if ($commonCode) {
-                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
-            }
-            return '';
-        };
         $reportType = function ($value) {
             $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
             ->where('type', 'ReportType')
@@ -101,12 +77,16 @@ class Edu_StudentReportController extends AdminController{
 
         $show->field('branch.branch_name', __('Tên chi nhánh'));
         $show->field('schedule.name', __('Lịch học'));
-        $show->field('type', __('Loại báo cáo'))->as($reportType);
+        $show->field('type', __('Loại báo cáo'))->as(function ($type) {
+            return UtilsCommonHelper::commonCodeGridFormatter("Core", "ReportType", "description_vi", $type);
+        });
         $show->field('report_date', __('Ngày báo cáo'));
         $show->field('lesson_name', __('Tên bài giảng'));
         $show->field('home_work', __('Bài tập'));
         $show->field('general_comment', __('Bài luận chung'));
-        $show->field('status', __('Trạng thái'))->as($status);
+        $show->field('status', __('Trạng thái'))->as(function ($status) {
+            return UtilsCommonHelper::statusDetailFormatter($status);
+        });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
        

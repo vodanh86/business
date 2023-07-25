@@ -2,7 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Account;
 use App\Http\Models\Edu\EduTuitionCollection;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -141,16 +140,17 @@ class Edu_TuitionCollectionController extends AdminController{
         $form->text('description', __('Mô tả'));
 
         if ($form->isEditing()) {
-            $recordStatus = $form->model()->record_status;
+            $id = request()->route()->parameter('tuition_collection');
+            $recordStatus = $form->model()->find($id)->getOriginal("status");
             if ($recordStatus === 0) {
-                $form->select('record_status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
+                $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
             } else if ($recordStatus === 1) {
-                $form->select('record_status', __('Trạng thái'))->options(Constant::RECORDSTATUS_UPDATE)->required();
+                $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_UPDATE)->required();
             } else {
-                $form->select('record_status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
+                $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
             }
         } else {
-            $form->select('record_status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
+            $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
         }
         
         $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
@@ -213,20 +213,24 @@ class Edu_TuitionCollectionController extends AdminController{
             scheduleSelect.on('change', function() {
 
                 studentSelect.empty();
+                optionsStudent = {};
                 $("#class_name").val("")
 
                 var selectedScheduleId = $(this).val();
                 if(!selectedScheduleId) return
+
                 $.get("$urlScheduleById", { q: selectedScheduleId }, function (schedule) {
 
                     $.get("$urlClassById", { q: schedule.class_id }, function (cls) {
                         $("#class_name").val(cls.name)
                     });
 
-                    $.get("$urlStudent", { schedule_id: schedule.class_id }, function (students) {
+                    $.get("$urlStudent", { schedule_id: schedule.id }, function (students) {
+
                         var studentsActive = students.filter(function (student) {
-                            return student.status === 1 && student.class_id === schedule.class_id
-                        });      
+                            return student.status === 1 && student.schedule_id === schedule.id
+                        });
+                        
                         $.each(studentsActive, function (index, student) {
                             optionsStudent[student.id] = student.name;
                         });

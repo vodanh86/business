@@ -2,16 +2,12 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Branch;
-use App\Http\Models\Core\Business;
 use App\Http\Models\Core\CommonCode;
-use App\Http\Models\Edu\EduClass;
 use App\Http\Models\Edu\EduStudent;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
-use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 
 class Edu_StudentController extends AdminController{
@@ -137,6 +133,7 @@ class Edu_StudentController extends AdminController{
 
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId);
             $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId);
+            // $form->text('class_name', __('Tên lớp học'))->value()->disable()->required();
         } else {
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();

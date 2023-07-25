@@ -2,18 +2,16 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Business;
-use App\Http\Models\Core\CommonCode;
 use App\Http\Models\Edu\EduEmployee;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 
 class Edu_EmployeeController extends AdminController{
- /**
+
+    /**
      * Title for current resource.
      *
      * @var string
@@ -27,30 +25,25 @@ class Edu_EmployeeController extends AdminController{
      */
     protected function grid()
     {
-        $status = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Status')
-            ->where('value', $value)
-            ->first();
-            if ($commonCode) {
-                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
-            }
-            return '';
-        };
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
         $grid = new Grid(new EduEmployee());
         
         $grid->column('name', __('Họ và tên'));
         $grid->column('phone', __('Số điện thoại'));
-        $grid->column('status', __('Trạng thái'))->display($status);
-        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
+        $grid->column('status', __('Trạng thái'))->display(function ($status) {
+            return UtilsCommonHelper::statusGridFormatter($status);
+        });
+        $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
+            return ConstantHelper::dateFormatter($createdAt);
+        });
+        $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($createdAt) {
+            return ConstantHelper::dateFormatter($createdAt);
+        });
+        $grid->model()->where('business_id', '=', Admin::user()->business_id);
+        $grid->fixColumns(0, 0);
         return $grid;
     }
-      /**
+
+    /**
      * Make a show builder.
      *
      * @param mixed $id
@@ -58,19 +51,19 @@ class Edu_EmployeeController extends AdminController{
      */
     protected function detail($id)
     {
-        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
         $show = new Show(EduEmployee::findOrFail($id));
 
         $show->field('business.name', __('Tên doanh nghiệp'));
         $show->field('name', __('Họ và tên'));
         $show->field('phone', __('Số điện thoại'));
-        $show->field('status', __('Trạng thái'))->as(function ($value) use ($status) {
-            return $status[$value] ?? '';
+        $show->field('status', __('Trạng thái'))->as(function ($status) {
+            return UtilsCommonHelper::statusDetailFormatter($status);
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
         return $show;
     }
+
      /**
      * Make a form builder.
      *
@@ -78,14 +71,15 @@ class Edu_EmployeeController extends AdminController{
      */
     protected function form()
     {
-        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
+        $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
+        $statusDefault = $statusOptions->keys()->first();
+        $business = (new UtilsCommonHelper)->currentBusiness();
 
-        $business = Business::where('id', Admin::user()->business_id)->first();
         $form = new Form(new EduEmployee());
         $form->hidden('business_id')->value($business->id);
         $form->text('name', __('Họ và tên'));
         $form->mobile('phone', __('Số điện thoại'))->options(['mask' => '999 999 9999'])->required();
-        $form->select('status', __('Trạng thái'))->options($status)->required();
+        $form->select('status', __('Trạng thái'))->options($statusOptions)->required($statusDefault);
 
         return $form;
     }
