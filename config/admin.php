@@ -249,7 +249,7 @@ return [
     | Set a default avatar for newly created users.
     |
     */
-    'default_avatar' => 'https://sba.net.vn/wp-content/uploads/2020/09/LOGO-SBA-SVG-02.svg',
+    'default_avatar' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -409,19 +409,19 @@ return [
             "enable" => true,
   
             "view" => [
-                "label" => "Detail",
+                "label" => "Chi tiết",
                 "icon"  => "fa fa-eye",
                 "class" => "btn btn-sm btn-secondary"
             ],
   
             "edit" => [
-                "label" => "Edit",
+                "label" => "Chỉnh sửa",
                 "icon"  => "fa fa-edit",
                 "class" => "btn btn-sm btn-secondary"
             ],
   
             "delete" => [
-                "label" => "",
+                "label" => "Xoá",
                 "icon"  => "fa fa-trash",
                 "class" => "btn btn-sm btn-secondary"
             ]
