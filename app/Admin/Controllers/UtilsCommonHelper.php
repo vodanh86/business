@@ -6,6 +6,7 @@ use App\Http\Models\Core\Account;
 use App\Http\Models\Core\Branch;
 use App\Http\Models\Core\Business;
 use App\Http\Models\Core\CommonCode;
+use App\Http\Models\Core\TransactionCode;
 use App\Http\Models\Edu\EduClass;
 use App\Http\Models\Edu\EduSchedule;
 use Carbon\Carbon;
@@ -84,6 +85,30 @@ class UtilsCommonHelper
             ];
         })->pluck('text', 'value');
         return $bankAccountOptions;
+    }
+    public static function transactionCodeFormatter($id, $isGrid)
+    {
+        $transactionCode =  TransactionCode::where('id', $id)->first();
+        if ($transactionCode && $isGrid === "grid") {
+            $debitCreditInd = $transactionCode->debit_credit_ind ?? "";
+            $name = $transactionCode->name ?? "";
+            return "<span class='label label-primary'>$debitCreditInd - $name</span>";
+        } else if ($transactionCode && $isGrid === "detail") {
+            return "$transactionCode->debit_credit_ind - $transactionCode->name";
+        } else {
+            return "";
+        }
+    }
+    public static function transactionCodeFormFormatter($type)
+    {
+        $transactionCodes = $type ? TransactionCode::where('debit_credit_ind', $type)->where("status", 1)->get() : TransactionCode::all()->where("status", 1);
+        $transactionCodeOptions = $transactionCodes->map(function ($code) {
+            return [
+                'value' => $code->id,
+                'text' => $code->debit_credit_ind . ' - ' . $code->name,
+            ];
+        })->pluck('text', 'value');
+        return $transactionCodeOptions;
     }
 
     public static function currentBusiness()

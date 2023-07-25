@@ -405,6 +405,14 @@ return [
     |
     */
     'extensions' => [
+        'log-viewer' => [
+            'route' => [
+                'domain' => env('APP_URL')
+            ]
+        ],
+        'chartjs' => [
+            'enable' => true,
+        ],
         'custom-actions-button' => [
             "enable" => true,
   
