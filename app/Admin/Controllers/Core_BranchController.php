@@ -2,7 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Business;
 use App\Http\Models\Core\Branch;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -85,7 +84,6 @@ class Core_BranchController extends AdminController
 
         $form = new Form(new Branch());
         $form->hidden('business_id')->value($business->id);
-        $form->text('name_business', __('Tên doanh nghiệp'))->disable();
         $form->text('branch_name', __('Tên chi nhánh'))->required();
         $form->text('address', __('Địa chỉ'))->required();
         $form->mobile('phone', __('Số điện thoại'))->options(['mask' => '999 999 9999'])->required();

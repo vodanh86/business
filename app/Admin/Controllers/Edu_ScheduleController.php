@@ -46,7 +46,7 @@ class Edu_ScheduleController extends AdminController{
                 return '';
             }
             $dayValueType = join(", ", $dayDescriptions);
-            return "<span class='label label-success'>$dayValueType</span>";
+            return "<span class='label label-primary'>$dayValueType</span>";
         });
         
         $grid->column('start_time', __('Thời gian bắt đầu'));

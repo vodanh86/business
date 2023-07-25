@@ -19,4 +19,9 @@ class ClassController extends Controller
         $class = EduClass::find($id);
         return $class;
     }
+    public function getAll(Request $request)
+    {
+        $classes = EduClass::all();
+        return $classes;
+    }
 }
