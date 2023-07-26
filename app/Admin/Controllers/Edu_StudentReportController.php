@@ -2,10 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Branch;
-use App\Http\Models\Core\Business;
-use App\Http\Models\Core\CommonCode;
-use App\Http\Models\Edu\EduSchedule;
 use App\Http\Models\Edu\EduStudentReport;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -30,7 +26,7 @@ class Edu_StudentReportController extends AdminController{
     {
         $reportDetailURL = function ($value) {
             if(!$value) return;
-            return "<a href='http://127.0.0.1:8000/admin/edu/report-detail/$value' style='text-decoration: underline' target='_blank'>Báo cáo chi tiết</a>";
+            return "<a href='https://business.metaverse-solution.vn/admin/edu/report-detail/$value' style='text-decoration: underline' target='_blank'>Báo cáo chi tiết</a>";
         };
 
         $grid = new Grid(new EduStudentReport());
@@ -91,35 +87,33 @@ class Edu_StudentReportController extends AdminController{
      */
     protected function form()
     {
-        $business = Business::where('id', Admin::user()->business_id)->first();
-        $branchesBiz = Branch::where('business_id', Admin::user()->business_id)->pluck('branch_name', 'id');
-        $allSchedule = EduSchedule::all()->pluck('name', 'id');
+        $branchs = (new UtilsCommonHelper)->optionsBranch();
+        $business = (new UtilsCommonHelper)->currentBusiness();
 
-        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
-        $reportType = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "ReportType")->pluck('description_vi','value');
+        $reportTypeOptions = (new UtilsCommonHelper)->commonCode("Edu", "ReportType", "description_vi", "value");
+        $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
+        $statusDefault = $statusOptions->keys()->first();
 
         $form = new Form(new EduStudentReport());
         $form->hidden('business_id')->value($business->id);
         if ($form->isEditing()) {
-            // $id = request()->route()->parameter('tuition_collection');
-            // $model = $form->model()->find($id);
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
-            $form->select('schedule_id', __('Tên lịch học'))->options($allSchedule)->default(function ($id) {
-                $schedule = EduSchedule::find($id);
-                if ($schedule) {
-                    return [$schedule->id => $schedule->name];
-                }
-            })->required();
+            $id = request()->route()->parameter('student_report');
+            $branchId = $form->model()->find($id)->getOriginal("branch_id");
+            $schedules = (new UtilsCommonHelper)->optionsScheduleByBranchId($branchId);
+            $scheduleId = $form->model()->find($id)->getOriginal("schedule_id");
+
+            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
+            $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required();
         }else{
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchesBiz)->required();
+            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();
         }
-        $form->select('type', __('Loại báo cáo'))->options($reportType)->required();
+        $form->select('type', __('Loại báo cáo'))->options($reportTypeOptions)->required();
         $form->date('report_date', __('Ngày báo cáo'));
         $form->text('lesson_name', __('Tên bài giảng'));
         $form->textarea('home_work', __('Bài tập'));
         $form->textarea('general_comment', __('Bình luận chung'));
-        $form->select('status', __('Trạng thái'))->options($status)->required();
+        $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault);
 
 
         $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
