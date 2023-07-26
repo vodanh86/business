@@ -10,14 +10,14 @@ use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 class Edu_StudentReportController extends AdminController{
 
-    /**
+    /***
      * Title for current resource.
      *
      * @var string
      */
     protected $title = 'Báo cáo học sinh';
 
-    /**
+    /***
      * Make a grid builder.
      *
      * @return Grid
