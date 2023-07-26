@@ -384,7 +384,6 @@ return [
     |--------------------------------------------------------------------------
     */
     'grid_action_class' => \Encore\Admin\Grid\Displayers\DropdownActions::class,
-
     /*
     |--------------------------------------------------------------------------
     | Extension Directory
@@ -411,19 +410,19 @@ return [
             ]
         ],
         'chartjs' => [
-            'enable' => true,
+                'enable' => true,
         ],
         'custom-actions-button' => [
             "enable" => true,
   
             "view" => [
-                "label" => "Chi tiết",
+                "label" => "Xem",
                 "icon"  => "fa fa-eye",
                 "class" => "btn btn-sm btn-secondary"
             ],
   
             "edit" => [
-                "label" => "Chỉnh sửa",
+                "label" => "Sửa",
                 "icon"  => "fa fa-edit",
                 "class" => "btn btn-sm btn-secondary"
             ],
