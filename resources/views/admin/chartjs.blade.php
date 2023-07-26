@@ -12,6 +12,11 @@
         justify-content: space-between;
         align-items: center
     }
+    @media (max-width: 980px) {
+        .container {
+            flex-direction: column;
+        }
+    }
 </style>
 <body>
     <div class="container">

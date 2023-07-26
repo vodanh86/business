@@ -11,9 +11,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
-use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
-
 class Edu_StudentReportController extends AdminController{
 
     /**
@@ -31,6 +29,7 @@ class Edu_StudentReportController extends AdminController{
     protected function grid()
     {
         $reportDetailURL = function ($value) {
+            if(!$value) return;
             return "<a href='http://127.0.0.1:8000/admin/edu/report-detail/$value' style='text-decoration: underline' target='_blank'>Báo cáo chi tiết</a>";
         };
 
@@ -38,7 +37,7 @@ class Edu_StudentReportController extends AdminController{
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('schedule.name', __('Lịch học'));
         $grid->column('type', __('Loại báo cáo'))->display(function($type){
-            return UtilsCommonHelper::commonCodeGridFormatter("Core", "ReportType", "description_vi", $type);
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $type);
         });
         $grid->column('report_date', __('Ngày báo cáo'))->display(function ($reportDate) {
             return ConstantHelper::dateFormatter($reportDate);
@@ -65,20 +64,12 @@ class Edu_StudentReportController extends AdminController{
      */
     protected function detail($id)
     {
-        $reportType = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'ReportType')
-            ->where('value', $value)
-            ->first();
-            return $commonCode ? $commonCode->description_vi : '';
-        };
-
         $show = new Show(EduStudentReport::findOrFail($id));
 
         $show->field('branch.branch_name', __('Tên chi nhánh'));
         $show->field('schedule.name', __('Lịch học'));
         $show->field('type', __('Loại báo cáo'))->as(function ($type) {
-            return UtilsCommonHelper::commonCodeGridFormatter("Core", "ReportType", "description_vi", $type);
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $type);
         });
         $show->field('report_date', __('Ngày báo cáo'));
         $show->field('lesson_name', __('Tên bài giảng'));
@@ -92,6 +83,7 @@ class Edu_StudentReportController extends AdminController{
        
         return $show;
     }
+
      /**
      * Make a form builder.
      *

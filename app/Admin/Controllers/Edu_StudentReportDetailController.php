@@ -2,210 +2,124 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Account;
+use App\Admin\Grid\CustomEditAction;
 use App\Http\Models\Core\Branch;
-use App\Http\Models\Core\Business;
-use App\Http\Models\Core\CommonCode;
-use App\Http\Models\Edu\EduClass;
 use App\Http\Models\Edu\EduSchedule;
-use App\Http\Models\Edu\EduStudent;
+use App\Http\Models\Edu\EduStudentReport;
 use App\Http\Models\Edu\EduStudentReportDetail;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
-use Encore\Admin\Show;
 use Encore\Admin\Grid;
-use Carbon\Carbon;
-use Encore\Admin\Facades\Admin;
+use Encore\Admin\Layout\Content;
+use Illuminate\Support\Facades\View;
+use Encore\Admin\Form;
 
-class Edu_StudentReportDetailController extends AdminController{
- /**
+
+class Edu_StudentReportDetailController extends AdminController
+{
+    /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Báo cáo chi tiết học sinh';
+    protected $title = 'Báo cáo';
+
+    public function index(Content $content)
+    {
+        $grid = $this->grid();
+
+        return $content
+            ->header($this->title)
+            ->body($grid);
+    }
 
     /**
      * Make a grid builder.
      *
+     * @param int|null $student_report_id
      * @return Grid
      */
-    protected function grid()
+    protected function grid($student_report_id = null)
     {
-        $dateFormatter = function ($updatedAt) {
-            $carbonUpdatedAt = Carbon::parse($updatedAt);
-            return $carbonUpdatedAt->format('d/m/Y - H:i:s');
-        };
         $status = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Status')
-            ->where('value', $value)
-            ->first();
-            if ($commonCode) {
-                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
-            }
-            return '';
+            return UtilsCommonHelper::commonCodeGridFormatter("Core", "Status", "description_vi", $value);
         };
+
         $harkwork = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Harkwork')
-            ->where('value', $value)
-            ->first();
-            return $commonCode ? $commonCode->description_vi : '';
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Harkwork", "description_vi", $value);
         };
+
         $lastHomework = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'LastHomework')
-            ->where('value', $value)
-            ->first();
-            return $commonCode ? $commonCode->description_vi : '';
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "LastHomework", "description_vi", $value);
         };
 
         $grid = new Grid(new EduStudentReportDetail());
+
         $grid->column('student.name', __('Tên học sinh'));
         $grid->column('harkwork', __('Chuyên cần'))->display($harkwork);
-        $grid->column('last_homework', __('Bài tập về nhà'))->display($lastHomework);
+        $grid->column('last_homework', __('Bài tập cuối'))->display($lastHomework);
+        $grid->column('mini_test', __('Kiểm tra ngắn'));
+        $grid->column('home_work', __('Bài tập về nhà'));
+        $grid->column('comment', __('Bình luận'));
+        $grid->column('parent_comment', __('Bố mẹ bình luận'));
         $grid->column('status', __('Trạng thái'))->display($status);
-        $grid->column('created_at', __('Ngày tạo'))->display($dateFormatter);
-        $grid->column('updated_at', __('Ngày cập nhật'))->display($dateFormatter);
-
+        $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
+            return date('d/m/Y - H:i:s', strtotime($createdAt));
+        });
+        $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
+            return date('d/m/Y - H:i:s', strtotime($updatedAt));
+        });
+        $grid->fixColumns(0,0);
         $grid->disableCreateButton();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
+            $actions->disableEdit();
+            $actions->disableView();
+            $actions->append(new CustomEditAction($actions->getKey()));
         });
-        // $id = request()->route();
-        // dd($id);
-        // $model = $grid->model()->find($id);
-        $grid->fixColumns(0, 0);
+        if ($student_report_id !== null) {
+            $grid->model()->where('id', $student_report_id);
+        }
 
         return $grid;
     }
-     /**
-     * Make a show builder.
+
+    /**
+     * Show the detail of a specific student report.
      *
-     * @param mixed $id
-     * @return Show
+     * @param int $id
+     * @return Content
      */
-    protected function detail($id)
+    public function detail($id)
     {
-        $status = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Status')
-            ->where('value', $value)
-            ->first();
-            if ($commonCode) {
-                return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
-            }
-            return '';
-        };
-        $harkwork = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'Harkwork')
-            ->where('value', $value)
-            ->first();
-            return $commonCode ? $commonCode->description_vi : '';
-        };
-        $lastHomework = function ($value) {
-            $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
-            ->where('type', 'LastHomework')
-            ->where('value', $value)
-            ->first();
-            return $commonCode ? $commonCode->description_vi : '';
-        };
+        $report = EduStudentReport::findOrFail($id);
+        $branch = Branch::all()->where("id", $report->branch_id)->first();
+        $schedule = EduSchedule::all()->where("id", $report->schedule_id)->first();
+        $typeReport = UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $report->type);
 
-        $show = new Show(EduStudentReportDetail::findOrFail($id));
-
-       
-        $show->field('student.name', __('Tên học sinh'));
-        $show->field('harkwork', __('Chuyên cần'))->as($harkwork);
-        $show->field('last_homework', __('Bài tập về nhà'))->as($lastHomework);
-        $show->field('studentReport.report_date', __('Ngày báo cáo'));
-        $show->field('studentReport.general_comment', __('Bình luận chung'));
-        $show->field('status', __('Trạng thái'))->as($status);
-        $show->field('created_at', __('Ngày tạo'));
-        $show->field('updated_at', __('Ngày cập nhật'));
-       
-        return $show;
+        $reportDetail = EduStudentReportDetail::all()->where("student_report_id", $id)->first();
+        $reportDetailId = $reportDetail->id;
+        $filteredGrid = $this->grid($reportDetailId);
+        
+        return View::make('admin.student_report_detail', compact('report', 'branch', 'schedule', 'typeReport', 'filteredGrid'));
     }
-     /**
+
+    /**
      * Make a form builder.
      *
      * @return Form
      */
     protected function form()
     {
-        $business = Business::where('id', Admin::user()->business_id)->first();
-        $branchesBiz = Branch::where('business_id', Admin::user()->business_id)->pluck('branch_name', 'id');
-        $allSchedule = EduSchedule::all()->pluck('name', 'id');
-
-        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
-        $harkwork = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Harkwork")->pluck('description_vi','value');
-        $lastHomework = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "LastHomework")->pluck('description_vi','value');
-
         $form = new Form(new EduStudentReportDetail());
-        if ($form->isEditing()) {
-            $id = request()->route()->parameter("report_detail");
-            $model = $form->model()->find($id);
-            $branchName = $model->branch->branch_name;
+        $form->select('hardword', __('Loại báo cáo'))->options()->required();
+        $form->date('last_homeword', __('Ngày báo cáo'));
+        $form->text('mini_test', __('Tên bài giảng'));
+        $form->textarea('home_work', __('Bài tập'));
+        $form->textarea('comment', __('Bình luận chung'));
+        $form->textarea('parent_comment', __('Bình luận chung'));
+        $form->select('status', __('Trạng thái'))->options()->required();
 
-            $form->hidden('business_id')->value($business->id);
-            $form->text('branch_id', __('Tên chi nhánh'))->value($branchName)->disable();
-            $form->select('schedule_id', __('Tên lịch học'))->options($allSchedule)->default(function ($id) {
-                $schedule = EduSchedule::find($id);
-                if ($schedule) {
-                    return [$schedule->id => $schedule->name];
-                }
-            })->required();
-            $form->select('harkwork', __('Chuyên cần'))->options($harkwork)->required();
-            $form->select('last_homework', __('Bài tập về nhà'))->options($lastHomework)->required();
-            $form->select('status', __('Trạng thái'))->options($status)->required();
-        }
-        $form->tools(function (Form\Tools $tools) {
-            $tools->disableDelete();
-        });
-
-        
-        $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
-
-        $script = <<<EOT
-        $(function() {
-            var branchSelect = $(".branch_id");
-            var scheduleSelect = $(".schedule_id");
-            var optionsSchedule = {};
-
-            branchSelect.on('change', function() {
-
-                scheduleSelect.empty();
-                optionsSchedule = {};
-                $("#class_name").val("")
-
-                var selectedBranchId = $(this).val();
-                if(!selectedBranchId) return
-                $.get("$urlSchedule", { branch_id: selectedBranchId }, function (schedules) {
-                    var schedulesActive = schedules.filter(function (cls) {
-                        return cls.status === 1;
-                    });                    
-                    $.each(schedulesActive, function (index, cls) {
-                        optionsSchedule[cls.id] = cls.name;
-                    });
-                    scheduleSelect.empty();
-                    scheduleSelect.append($('<option>', {
-                        value: '',
-                        text: ''
-                    }));
-                    $.each(optionsSchedule, function (id, scheduleName) {
-                        scheduleSelect.append($('<option>', {
-                            value: id,
-                            text: scheduleName
-                        }));
-                    });
-                    scheduleSelect.trigger('change');
-                });
-            });
-        });
-        
-        EOT;
-        Admin::script($script);
         return $form;
     }
 }
+

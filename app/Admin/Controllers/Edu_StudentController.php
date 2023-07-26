@@ -37,8 +37,11 @@ class Edu_StudentController extends AdminController{
         });
         $grid->column('source', __('Nguồn'));
         $grid->column('name', __('Tên học sinh'));
+        $grid->column('student_phone_number', __('SĐT học sinh'));
+        $grid->column('student_email', __('Email học sinh'));
         $grid->column('parent', __('Bố mẹ'));
-        $grid->column('phone_number', __('Số điện thoại'));
+        $grid->column('phone_number', __('SĐT bố hoặc mẹ'));
+        $grid->column('parent_email', __('Email bố hoặc mẹ'));
         $grid->column('last_call', __('Liên lạc gần nhất'));
         $grid->column('contact_status', __('Trạng thái liên lạc'));
         $grid->column('grade', __('Khối'))->display(function($grade){
@@ -48,7 +51,7 @@ class Edu_StudentController extends AdminController{
             return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Location", "description_vi", $location);
         });
         $grid->column('school', __('Trường'))->display(function($grade){
-            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Grade", "description_vi", $grade);
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "School", "description_vi", $grade);
         });
         $grid->column('status', __('Trạng thái'))->display(function ($status) {
             return UtilsCommonHelper::statusGridFormatter($status);
@@ -85,8 +88,11 @@ class Edu_StudentController extends AdminController{
         });
         $show->field('source', __('Nguồn'));
         $show->field('name', __('Tên học sinh'));
+        $show->field('student_phone_number', __('SĐT học sinh'));
+        $show->field('student_email', __('Email học sinh'));
         $show->field('parent', __('Bố mẹ'));
-        $show->field('phone_number', __('Số điện thoại'));
+        $show->field('phone_number', __('SĐT bố hoặc mẹ'));
+        $show->field('parent_email', __('Email bố hoặc mẹ'));
         $show->field('last_call', __('Liên lạc gần nhất'));
         $show->field('contact_status', __('Trạng thái liên lạc'));
         $show->field('grade', __('Khối'))->as(function($grade){
@@ -96,7 +102,7 @@ class Edu_StudentController extends AdminController{
             return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Location", "description_vi", $location);
         });
         $show->field('school', __('Trường'))->as(function($grade){
-            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Grade", "description_vi", $grade);
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "School", "description_vi", $grade);
         });
         $show->field('status', __('Trạng thái'))->as(function ($status) {
             return UtilsCommonHelper::statusDetailFormatter($status);
@@ -143,8 +149,11 @@ class Edu_StudentController extends AdminController{
         $form->select('wom', __('WOM'))->options($wom);
         $form->text('source', __('Nguồn'));
         $form->text('name', __('Tên học sinh'));
+        $form->mobile('student_phone_number', __('SĐT học sinh'))->options(['mask' => '999 999 9999']);
+        $form->text('student_email', __('Email học sinh'));
         $form->text('parent', __('Bố mẹ'));
-        $form->mobile('phone_number', __('Số điện thoại'))->options(['mask' => '999 999 9999']);
+        $form->text('parent_email', __('Email bố hoặc mẹ'));
+        $form->mobile('phone_number', __('SĐT bố hoặc mẹ'))->options(['mask' => '999 999 9999']);
         $form->text('last_call', __('Liên lạc gần nhất'));
         $form->text('contact_status', __('Trạng thái liên lạc'));
         $form->select('grade', __('Khối'))->options($grade);

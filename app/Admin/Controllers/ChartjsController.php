@@ -33,7 +33,6 @@ class ChartjsController extends Controller
                 });  
                 classLength = classesActive.length
                 data.push(classLength);
-                console.log(data);
             });
         });
         
