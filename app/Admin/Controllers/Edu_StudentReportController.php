@@ -81,7 +81,7 @@ class Edu_StudentReportController extends AdminController{
     }
 
      /**
-     * Make a form builder.
+     * Make a form builder
      *
      * @return Form
      */
