@@ -2,7 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\CommonCode;
 use App\Http\Models\Edu\EduStudent;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -119,13 +118,13 @@ class Edu_StudentController extends AdminController{
      */
     protected function form()
     {
-        $status = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Status")->pluck('description_vi','value');
-        $school = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "School")->pluck('description_vi','value');
-        $channel = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Channel")->pluck('description_vi','value');
-        $wom = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "WOM")->pluck('description_vi','value');
-        $grade = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Grade")->pluck('description_vi','value');
-        $location = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "Location")->pluck('description_vi','value');
-        
+        $schoolOptions = (new UtilsCommonHelper)->commonCode("Edu", "School", "description_vi", "value");
+        $channelOptions = (new UtilsCommonHelper)->commonCode("Edu", "Channel", "description_vi", "value");
+        $womOptions = (new UtilsCommonHelper)->commonCode("Edu", "WOM", "description_vi", "value");
+        $gradeOptions = (new UtilsCommonHelper)->commonCode("Edu", "Grade", "description_vi", "value");
+        $locationOptions = (new UtilsCommonHelper)->commonCode("Edu", "Location", "description_vi", "value");
+        $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
+        $statusDefault = $statusOptions->keys()->first();
         $branchs = (new UtilsCommonHelper)->optionsBranch();
         $business = (new UtilsCommonHelper)->currentBusiness();
 
@@ -145,8 +144,8 @@ class Edu_StudentController extends AdminController{
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();
             $form->text('class_name', __('Tên lớp học'))->disable()->required();
         }
-        $form->select('channel', __('Kênh'))->options($channel);
-        $form->select('wom', __('WOM'))->options($wom);
+        $form->select('channel', __('Kênh'))->options($channelOptions);
+        $form->select('wom', __('WOM'))->options($womOptions);
         $form->text('source', __('Nguồn'));
         $form->text('name', __('Tên học sinh'));
         $form->mobile('student_phone_number', __('SĐT học sinh'))->options(['mask' => '999 999 9999']);
@@ -156,10 +155,10 @@ class Edu_StudentController extends AdminController{
         $form->mobile('phone_number', __('SĐT bố hoặc mẹ'))->options(['mask' => '999 999 9999']);
         $form->text('last_call', __('Liên lạc gần nhất'));
         $form->text('contact_status', __('Trạng thái liên lạc'));
-        $form->select('grade', __('Khối'))->options($grade);
-        $form->select('location', __('Địa chỉ'))->options($location);
-        $form->select('school', __('Trường'))->options($school);
-        $form->select('status', __('Trạng thái'))->options($status);
+        $form->select('grade', __('Khối'))->options($gradeOptions);
+        $form->select('location', __('Địa chỉ'))->options($locationOptions);
+        $form->select('school', __('Trường'))->options($schoolOptions);
+        $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault);
       
 
         $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
