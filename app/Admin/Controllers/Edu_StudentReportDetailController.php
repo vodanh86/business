@@ -110,15 +110,22 @@ class Edu_StudentReportDetailController extends AdminController
      */
     protected function form()
     {
+        $harkWorkOptions = (new UtilsCommonHelper)->commonCode("Edu", "Harkwork", "description_vi", "value");
+        $lastHomeworkOptions = (new UtilsCommonHelper)->commonCode("Edu", "LastHomework", "description_vi", "value");
+        $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
+        $statusDefault = $statusOptions->keys()->first();
         $form = new Form(new EduStudentReportDetail());
-        $form->select('hardword', __('Loại báo cáo'))->options()->required();
-        $form->date('last_homeword', __('Ngày báo cáo'));
-        $form->text('mini_test', __('Tên bài giảng'));
-        $form->textarea('home_work', __('Bài tập'));
-        $form->textarea('comment', __('Bình luận chung'));
-        $form->textarea('parent_comment', __('Bình luận chung'));
-        $form->select('status', __('Trạng thái'))->options()->required();
-
+        $form->select('harkwork', __('Chuyên cần'))->options($harkWorkOptions);
+        $form->select('last_homework', __('Bài tập cuối'))->options($lastHomeworkOptions);
+        $form->textarea('mini_test', __('Kiểm tra ngắn'));
+        $form->textarea('home_work', __('Bài tập về nhà'));
+        $form->textarea('comment', __('Bình luận học sinh'));
+        $form->textarea('parent_comment', __('Bố mẹ bình luận'));
+        $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault);
+        $form->tools(function (Form\Tools $tools) {
+            $tools->disableDelete();
+            $tools->disableView();
+        });
         return $form;
     }
 }
