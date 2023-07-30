@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('business', 'BusinessController@find');
 Route::get('businessType', 'BusinessTypeController@find');
 Route::get('branch', 'BranchController@find');
+Route::get('account', 'AccountController@find');
 Route::get('classes', 'ClassController@getAll');
 Route::get('class', 'ClassController@find');
 Route::get('class/get-by-id', 'ClassController@getById');

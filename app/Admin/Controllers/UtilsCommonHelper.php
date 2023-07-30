@@ -30,7 +30,7 @@ class UtilsCommonHelper
             ->where('type', $type)
             ->where('value', $value)
             ->first();
-            return $commonCode ? $commonCode->$description : '';
+        return $commonCode ? $commonCode->$description : '';
     }
     //Kiem tra ten lai(doi lai)
     public static function statusFormatter($value, $group, $isGrid)
@@ -64,8 +64,11 @@ class UtilsCommonHelper
         $bankAccount =  Account::where('id', $accountNumber)->first();
         if ($bankAccount && $isGrid === "grid") {
             return "<span class='label label-primary'>$bankAccount->bank_name - $bankAccount->number</span>";
+        } else if ($bankAccount) {
+            return "$bankAccount->bank_name - $bankAccount->number";
+        } else {
+            return "";
         }
-        return "$bankAccount->bank_name - $bankAccount->number";
     }
     public static function bankAccountGridFormatter($accountNumber)
     {
@@ -121,21 +124,21 @@ class UtilsCommonHelper
     }
     public static function optionsClassByBranchId($branchId)
     {
-        if($branchId !== null){
+        if ($branchId !== null) {
             return EduClass::where("branch_id", $branchId)->pluck('name', 'id');
         }
         return EduClass::all()->pluck('name', 'id');
     }
     public static function optionsScheduleByBranchId($branchId)
     {
-        if($branchId !== null){
+        if ($branchId !== null) {
             return EduSchedule::where("branch_id", $branchId)->pluck('name', 'id');
         }
         return EduSchedule::all()->pluck('name', 'id');
     }
     public static function optionsStudentByScheduleId($branchId)
     {
-        if($branchId !== null){
+        if ($branchId !== null) {
             return EduSchedule::where("branch_id", $branchId)->pluck('name', 'id');
         }
         return EduSchedule::all()->pluck('name', 'id');

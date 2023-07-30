@@ -96,6 +96,7 @@ class Edu_StudentReportDetailController extends AdminController
         $schedule = EduSchedule::all()->where("id", $report->schedule_id)->first();
         $typeReport = UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $report->type);
 
+        
         $reportDetail = EduStudentReportDetail::all()->where("student_report_id", $id)->first();
         $reportDetailId = $reportDetail->id;
         $filteredGrid = $this->grid($reportDetailId);

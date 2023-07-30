@@ -164,14 +164,18 @@ class Edu_TuitionCollectionController extends AdminController{
             var amount = $("#amount");
             var valueField = $("#value");
             
+            function parseFormattedNumber(num) {
+                return parseFloat(num.replace(/,/g, ''));
+            };
+
             unitPrice.on('change', function() {
-                var valueUnitPrice = parseFloat($(this).val());
+                var valueUnitPrice = parseFormattedNumber($(this).val());
                 amount.on('change', function() {
-                    var amountValue = parseFloat($(this).val());
+                    var amountValue = parseFormattedNumber($(this).val());
                     var valueTotal = valueUnitPrice * amountValue;
-                    var formattedValue = valueTotal.toLocaleString(undefined, {minimumFractionDigits: 3});
-                    valueField.val(formattedValue);
+                    valueField.val(valueTotal);
                 });
+                valueField.val($(this).val() * amountValue);
             });
 
             var branchSelect = $(".branch_id");

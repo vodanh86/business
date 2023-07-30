@@ -29,6 +29,9 @@ class Core_AccountController extends AdminController{
         $grid = new Grid(new Account());
         $grid->column('bank_name', __('Tên ngân hàng'));
         $grid->column('number', __('Số tài khoản'))->copyable();
+        $grid->column('balance', __('Số dư'))->display(function ($money) {
+            return ConstantHelper::moneyFormatter($money);
+        });
         $grid->column('type', __('Loại'));
         $grid->column('status', __('Trạng thái'))->display(function ($status) {
             return UtilsCommonHelper::statusFormatter($status, "Core", "grid");
