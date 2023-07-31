@@ -40,6 +40,7 @@ Route::group([
     $router->resource('/edu/expenditure', Edu_ExpenditureController::class);
     $router->resource('/edu/student-report', Edu_StudentReportController::class);
     $router->resource('/edu/report-detail', Edu_StudentReportDetailController::class);
+    $router->resource('/edu/report-student', Edu_ReportOfStudentController::class);
 
 
 });

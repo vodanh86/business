@@ -23,15 +23,6 @@ class Edu_StudentReportDetailController extends AdminController
      */
     protected $title = 'Báo cáo';
 
-    public function index(Content $content)
-    {
-        $grid = $this->grid();
-
-        return $content
-            ->header($this->title)
-            ->body($grid);
-    }
-
     /**
      * Make a grid builder.
      *

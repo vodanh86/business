@@ -104,8 +104,8 @@ class Edu_ScheduleController extends AdminController{
     protected function form()
     {
         $teacher = EduTeacher::where('business_id', Admin::user()->business_id)->where('status', 1)->pluck("name", "id");
-        $day = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "daysofweek")->pluck('description_vi','value');
-        
+
+        $daysOfWeek = (new UtilsCommonHelper)->commonCode("Edu", "daysofweek", "description_vi", "value");
         $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
         $statusDefault = $statusOptions->keys()->first();
         $business = (new UtilsCommonHelper)->currentBusiness();
@@ -127,7 +127,7 @@ class Edu_ScheduleController extends AdminController{
         }
         $form->select('teacher_id', __('Tên giảng viên'))->options($teacher)->required();
         $form->text('name', __('Tên lịch học'))->required();
-        $form->multipleSelect('day', __('Ngày'))->options($day)->required();
+        $form->multipleSelect('day', __('Ngày'))->options($daysOfWeek)->required();
         $form->text('start_time', __('Thời gian bắt đầu'))->required();
         $form->text('end_time', __('Thời gian kết thúc'))->required();
         $form->text('duration', __('Khoảng thời gian(giờ)'))->required();
