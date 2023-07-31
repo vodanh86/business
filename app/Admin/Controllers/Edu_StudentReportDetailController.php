@@ -3,13 +3,15 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Grid\CustomEditAction;
+use App\Admin\Grid\CustomViewAction;
 use App\Http\Models\Core\Branch;
 use App\Http\Models\Edu\EduSchedule;
 use App\Http\Models\Edu\EduStudentReport;
 use App\Http\Models\Edu\EduStudentReportDetail;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use Encore\Admin\Show;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Encore\Admin\Form;
 
@@ -26,10 +28,10 @@ class Edu_StudentReportDetailController extends AdminController
     /**
      * Make a grid builder.
      *
-     * @param int|null $student_report_id
+     * @param int||array $student_report_ids
      * @return Grid
      */
-    protected function grid($student_report_id = null)
+    protected function grid($student_report_ids = [])
     {
         $status = function ($value) {
             return UtilsCommonHelper::commonCodeGridFormatter("Core", "Status", "description_vi", $value);
@@ -59,18 +61,18 @@ class Edu_StudentReportDetailController extends AdminController
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return date('d/m/Y - H:i:s', strtotime($updatedAt));
         });
-        $grid->fixColumns(0,0);
+        $grid->fixColumns(0, 0);
         $grid->disableCreateButton();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableEdit();
             $actions->disableView();
+            // $actions->append(new CustomViewAction($actions->getKey()));
             $actions->append(new CustomEditAction($actions->getKey()));
         });
-        if ($student_report_id !== null) {
-            $grid->model()->where('id', $student_report_id);
+        if (!empty($student_report_ids)) {
+            $grid->model()->whereIn('id', $student_report_ids);
         }
-
         return $grid;
     }
 
@@ -78,23 +80,49 @@ class Edu_StudentReportDetailController extends AdminController
      * Show the detail of a specific student report.
      *
      * @param int $id
-     * @return Content
+     * @return Show
      */
     public function detail($id)
     {
-        $report = EduStudentReport::findOrFail($id);
-        $branch = Branch::all()->where("id", $report->branch_id)->first();
-        $schedule = EduSchedule::all()->where("id", $report->schedule_id)->first();
-        $typeReport = UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $report->type);
+        if (request()->is('admin/edu/report-student/*')) {
+            $report = EduStudentReport::findOrFail($id);
+            $branch = Branch::all()->where("id", $report->branch_id)->first();
+            $schedule = EduSchedule::all()->where("id", $report->schedule_id)->first();
+            $typeReport = UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $report->type);
 
-        
-        $reportDetail = EduStudentReportDetail::all()->where("student_report_id", $id)->first();
-        $reportDetailId = $reportDetail->id;
-        $filteredGrid = $this->grid($reportDetailId);
-        
-        return View::make('admin.student_report_detail', compact('report', 'branch', 'schedule', 'typeReport', 'filteredGrid'));
+
+            $reportDetails = EduStudentReportDetail::where("student_report_id", $id)->get();
+            $reportDetailIds = $reportDetails->pluck('id')->toArray();
+            $filteredGrid = $this->grid($reportDetailIds);
+
+
+            return View::make('admin.student_report_detail', compact('report', 'branch', 'schedule', 'typeReport', 'filteredGrid'));
+        } else {
+            $harkwork = function ($value) {
+                return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Harkwork", "description_vi", $value);
+            };
+
+            $lastHomework = function ($value) {
+                return UtilsCommonHelper::commonCodeGridFormatter("Edu", "LastHomework", "description_vi", $value);
+            };
+            $show = new Show(EduStudentReport::findOrFail($id));
+
+            $show->field('student.name', __('Tên học sinh'));
+            $show->field('harkwork', __('Chuyên cần'))->as($harkwork);
+            $show->field('last_homework', __('Bài tập cuối'))->as($lastHomework);
+            $show->field('mini_test', __('Kiểm tra ngắn'));
+            $show->field('home_work', __('Bài tập về nhà'));
+            $show->field('comment', __('Bình luận'));
+            $show->field('parent_comment', __('Bố mẹ bình luận'));
+            $show->field('status', __('Trạng thái'))->as(function ($status) {
+                return UtilsCommonHelper::statusDetailFormatter($status);
+            });
+            $show->field('created_at', __('Ngày tạo'));
+            $show->field('updated_at', __('Ngày cập nhật'));
+
+            return $show;
+        }
     }
-
     /**
      * Make a form builder.
      *
@@ -116,9 +144,9 @@ class Edu_StudentReportDetailController extends AdminController
         $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault);
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
-            $tools->disableView();
+            $tools->disableList();
         });
         return $form;
     }
-}
 
+}

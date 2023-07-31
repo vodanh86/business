@@ -5,9 +5,9 @@ namespace App\Admin\Grid;
 use Encore\Admin\Actions\RowAction;
 use Encore\Admin\Facades\Admin;
 
-class CustomEditAction extends RowAction
+class CustomViewAction extends RowAction
 {
-    public $name = 'Edit';
+    public $name = 'View';
     protected $id;
 
     public function __construct($id)
@@ -21,7 +21,7 @@ class CustomEditAction extends RowAction
 
     $('.grid-edit-row').on('click', function () {
         var id = $(this).data('id');
-        var editUrl = '/admin/edu/report-detail/' + id + '/edit';
+        var editUrl = '/admin/edu/report-detail/' + id;
         window.location.href = editUrl;
     });
 
@@ -32,7 +32,7 @@ class CustomEditAction extends RowAction
     {
         Admin::script($this->script());
 
-        return "<a class='fa fa-edit btn btn-sm btn-secondary grid-edit-row' data-id='{$this->id}'>Sửa</a>";
+        return "<a class='fa fa-eye btn btn-sm btn-secondary grid-edit-row' data-id='{$this->id}'>Xem</a>";
     }
     public function __toString()
     {

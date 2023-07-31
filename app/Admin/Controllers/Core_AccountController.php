@@ -80,6 +80,7 @@ class Core_AccountController extends AdminController{
 
         $form = new Form(new Account());
         $form->hidden('business_id')->value($business->id);
+        $form->hidden('balance')->value(0);
         if ($form->isEditing()) {
             $id = request()->route()->parameter('bankaccount');
             $bankName = $form->model()->find($id)->getOriginal("bank_name");

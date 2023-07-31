@@ -26,12 +26,18 @@ class Edu_TuitionCollectionController extends AdminController{
     protected function grid()
     {
         $grid = new Grid(new EduTuitionCollection());
+        $grid->column('trans_ref', __('Mã giao dịch'));
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('schedule.name', __('Lịch học'));
         $grid->column('student.name', __('Học sinh'));
-        $grid->column('processing_date', __('Ngày nghiệm thu'));
-        $grid->column('value_date', __('Ngày nộp tiền'))->display(function ($valueDate) {
-            return ConstantHelper::dateFormatter($valueDate);
+        $grid->column('processing_date', __('Ngày nộp tiền'))->display(function ($processingDate) {
+            return ConstantHelper::dayFormatter($processingDate);
+        });
+        $grid->column('value_date', __('Ngày bắt đầu học'))->display(function ($valueDate) {
+            return ConstantHelper::dayFormatter($valueDate);
+        });
+        $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
+            return ConstantHelper::dayFormatter($nextDate);
         });
         $grid->column('amount', __('Số lượng'));
         $grid->column('unit_price', __('Đơn giá'))->display(function ($unitPrice) {
@@ -39,9 +45,6 @@ class Edu_TuitionCollectionController extends AdminController{
         });
         $grid->column('value', __('Giá trị'))->display(function ($value) {
             return ConstantHelper::moneyFormatter($value);
-        });
-        $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
-            return ConstantHelper::dateFormatter($nextDate);
         });
         $grid->column('account_id', __('Số tài khoản'))->display(function ($accountNumber) {
             return UtilsCommonHelper::bankAccountGridFormatter($accountNumber);
@@ -70,12 +73,18 @@ class Edu_TuitionCollectionController extends AdminController{
     {
         $show = new Show(EduTuitionCollection::findOrFail($id));
 
+        $show->field('trans_ref', __('Mã giao dịch'));
         $show->field('branch.branch_name', __('Tên chi nhánh'));
         $show->field('schedule.name', __('Lịch học'));
         $show->field('student.name', __('Học sinh'));
-        $show->field('processing_date', __('Ngày nghiệm thu'));
-        $show->field('value_date', __('Ngày nộp tiền'))->as(function ($valueDate) {
-            return ConstantHelper::dateFormatter($valueDate);
+        $show->field('processing_date', __('Ngày nộp tiền'))->as(function ($processingDate) {
+            return ConstantHelper::dayFormatter($processingDate);
+        });
+        $show->field('value_date', __('Ngày bắt đầu học'))->as(function ($valueDate) {
+            return ConstantHelper::dayFormatter($valueDate);
+        });
+        $show->field('next_date', __('Ngày tiếp theo'))->as(function ($nextDate) {
+            return ConstantHelper::dayFormatter($nextDate);
         });
         $show->field('amount', __('Số lượng'));
         $show->field('unit_price', __('Đơn giá'))->as(function ($unitPrice) {
@@ -83,9 +92,6 @@ class Edu_TuitionCollectionController extends AdminController{
         });
         $show->field('value', __('Giá trị'))->as(function ($value) {
             return ConstantHelper::moneyFormatter($value);
-        });
-        $show->field('next_date', __('Ngày tiếp theo'))->as(function ($nextDate) {
-            return ConstantHelper::dateFormatter($nextDate);
         });
         $show->field('account_id', __('Tài khoản'))->as(function ($accountNumber) {
             return UtilsCommonHelper::bankAccountDetailFormatter($accountNumber);
@@ -112,6 +118,8 @@ class Edu_TuitionCollectionController extends AdminController{
         $account = (new UtilsCommonHelper)->bankAccountFormFormatter();
 
         $form = new Form(new EduTuitionCollection());
+        $tranferId = (new UtilsCommonHelper)->generateTransactionId("TC");
+        $form->text("trans_ref", __('Mã giao dịch'))->default($tranferId)->readonly();
         $form->hidden('business_id')->value($business->id);
         if ($form->isEditing()) {
             $id = request()->route()->parameter('tuition_collection');
@@ -163,6 +171,7 @@ class Edu_TuitionCollectionController extends AdminController{
             var unitPrice = $("#unit_price");
             var amount = $("#amount");
             var valueField = $("#value");
+            var amountValue;
             
             function parseFormattedNumber(num) {
                 return parseFloat(num.replace(/,/g, ''));
@@ -171,7 +180,7 @@ class Edu_TuitionCollectionController extends AdminController{
             unitPrice.on('change', function() {
                 var valueUnitPrice = parseFormattedNumber($(this).val());
                 amount.on('change', function() {
-                    var amountValue = parseFormattedNumber($(this).val());
+                    amountValue = parseFormattedNumber($(this).val());
                     var valueTotal = valueUnitPrice * amountValue;
                     valueField.val(valueTotal);
                 });
