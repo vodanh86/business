@@ -58,6 +58,11 @@ class Edu_TuitionCollectionController extends AdminController{
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
+        $grid->model()->where('business_id', '=', Admin::user()->business_id);
+       
+        $grid->actions(function ($actions) {
+            $actions->disableDelete();
+        });
         $grid->fixColumns(0, 0);
 
         return $grid;
@@ -102,7 +107,10 @@ class Edu_TuitionCollectionController extends AdminController{
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
-       
+        $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableDelete();
+        });;
         return $show;
     }
     
@@ -121,6 +129,9 @@ class Edu_TuitionCollectionController extends AdminController{
         $tranferId = (new UtilsCommonHelper)->generateTransactionId("TC");
         $form->text("trans_ref", __('Mã giao dịch'))->default($tranferId)->readonly();
         $form->hidden('business_id')->value($business->id);
+        $form->tools(function (Form\Tools $tools) {
+            $tools->disableDelete();
+        });
         if ($form->isEditing()) {
             $id = request()->route()->parameter('tuition_collection');
             $branchId = $form->model()->find($id)->getOriginal("branch_id");
