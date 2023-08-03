@@ -34,10 +34,10 @@ class Edu_TuitionCollectionController extends AdminController{
             return ConstantHelper::dayFormatter($processingDate);
         });
         $grid->column('value_date', __('Ngày bắt đầu học'))->display(function ($valueDate) {
-            return ConstantHelper::dayFormatter($valueDate);
+            return ConstantHelper::dayHightLightFormatter($valueDate, "valueDate");
         });
         $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
-            return ConstantHelper::dayFormatter($nextDate);
+            return ConstantHelper::dayHightLightFormatter($nextDate, "nextDate");
         });
         $grid->column('amount', __('Số lượng'));
         $grid->column('unit_price', __('Đơn giá'))->display(function ($unitPrice) {
@@ -63,6 +63,7 @@ class Edu_TuitionCollectionController extends AdminController{
         $grid->actions(function ($actions) {
             $actions->disableDelete();
         });
+        $grid->model()->orderBy("next_date");
         $grid->fixColumns(0, 0);
 
         return $grid;

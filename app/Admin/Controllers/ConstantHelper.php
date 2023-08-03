@@ -11,7 +11,7 @@ class ConstantHelper
         if ($dateIn === null) {
             return "";
         }
-    
+
         $carbonDateIn = Carbon::parse($dateIn)->setTimezone('Asia/Bangkok');
         return $carbonDateIn->format('d/m/Y - H:i:s');
     }
@@ -20,9 +20,28 @@ class ConstantHelper
         if ($dayIn === null) {
             return "";
         }
-    
+
         $carbonDayIn = Carbon::parse($dayIn)->setTimezone('Asia/Bangkok');
         return $carbonDayIn->format('d/m/Y');
+    }
+    public static function dayHightLightFormatter($dayIn, $type)
+    {
+        if ($dayIn === null) {
+            return "";
+        }
+        $carbonDayIn = Carbon::parse($dayIn)->setTimezone('Asia/Bangkok');
+        $today = Carbon::now('Asia/Bangkok');
+        if ($carbonDayIn->lessThan($today->subDays(2)) && $type == "nextDate") {
+            return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
+        } else if ($type == "valueDate") {
+            if ($carbonDayIn->lessThan($today->subDays(2))) {
+                return "<span class='label label-primary'>{$carbonDayIn->format('d/m/Y')}</span>";
+            } else {
+                return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
+            }
+        } else {
+            return $carbonDayIn->format('d/m/Y');
+        }
     }
     public static function moneyFormatter($money)
     {
