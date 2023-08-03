@@ -15,25 +15,17 @@ class CustomViewAction extends RowAction
         $this->id = $id;
     }
 
-    protected function script()
+    public function href()
     {
-    return <<<SCRIPT
-
-    $('.grid-edit-row').on('click', function () {
-        var id = $(this).data('id');
-        var editUrl = '/admin/edu/report-detail/' + id;
-        window.location.href = editUrl;
-    });
-
-    SCRIPT;
+        // Return the URL to the view page
+        return route('admin.edu.report-student.show', ['id' => $this->id]);
     }
 
     public function render()
     {
-        Admin::script($this->script());
-
-        return "<a class='fa fa-eye btn btn-sm btn-secondary grid-edit-row' data-id='{$this->id}'>Xem</a>";
+        return "<a class='fa fa-eye btn btn-sm btn-secondary grid-view-row' href='{$this->href()}'>Xem</a>";
     }
+
     public function __toString()
     {
         return $this->render();

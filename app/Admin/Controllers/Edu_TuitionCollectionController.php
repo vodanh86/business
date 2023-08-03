@@ -140,9 +140,9 @@ class Edu_TuitionCollectionController extends AdminController{
             $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
             $studentId = $form->model()->find($id)->getOriginal("student_id");
 
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId);
-            $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId);
-            $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId);
+            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required();
+            $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required();
+            $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId)->required();
         }else{
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();

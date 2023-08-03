@@ -9,6 +9,7 @@ use App\Http\Models\Core\CommonCode;
 use App\Http\Models\Core\TransactionCode;
 use App\Http\Models\Edu\EduClass;
 use App\Http\Models\Edu\EduSchedule;
+use App\Http\Models\Edu\EduStudent;
 use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Str;
@@ -145,16 +146,16 @@ class UtilsCommonHelper
     public static function optionsScheduleByBranchId($branchId)
     {
         if ($branchId !== null) {
-            return EduSchedule::where("branch_id", $branchId)->pluck('name', 'id');
+            return EduSchedule::where("branch_id", $branchId)->where('status', 1)->pluck('name', 'id');
         }
-        return EduSchedule::all()->pluck('name', 'id');
+        return EduSchedule::all()->where('status', 1)->pluck('name', 'id');
     }
-    public static function optionsStudentByScheduleId($branchId)
+    public static function optionsStudentByScheduleId($scheduleId)
     {
-        if ($branchId !== null) {
-            return EduSchedule::where("branch_id", $branchId)->pluck('name', 'id');
+        if ($scheduleId !== null) {
+            return EduStudent::where("schedule_id", $scheduleId)->where('status', 1)->pluck('name', 'id');
         }
-        return EduSchedule::all()->pluck('name', 'id');
+        return EduStudent::all()->where('status', 1)->pluck('name', 'id');
     }
     public static function generateTransactionId($type)
     {

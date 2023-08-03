@@ -67,7 +67,6 @@ class Edu_StudentReportDetailController extends AdminController
             $actions->disableDelete();
             $actions->disableEdit();
             $actions->disableView();
-            // $actions->append(new CustomViewAction($actions->getKey()));
             $actions->append(new CustomEditAction($actions->getKey()));
         });
         if (!empty($student_report_ids)) {
@@ -98,6 +97,7 @@ class Edu_StudentReportDetailController extends AdminController
 
             return View::make('admin.student_report_detail', compact('report', 'branch', 'schedule', 'typeReport', 'filteredGrid'));
         } else {
+            $show = new Show(EduStudentReportDetail::findOrFail($id));
             $harkwork = function ($value) {
                 return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Harkwork", "description_vi", $value);
             };
@@ -105,8 +105,6 @@ class Edu_StudentReportDetailController extends AdminController
             $lastHomework = function ($value) {
                 return UtilsCommonHelper::commonCodeGridFormatter("Edu", "LastHomework", "description_vi", $value);
             };
-            $show = new Show(EduStudentReport::findOrFail($id));
-
             $show->field('student.name', __('Tên học sinh'));
             $show->field('harkwork', __('Chuyên cần'))->as($harkwork);
             $show->field('last_homework', __('Bài tập cuối'))->as($lastHomework);
@@ -119,10 +117,15 @@ class Edu_StudentReportDetailController extends AdminController
             });
             $show->field('created_at', __('Ngày tạo'));
             $show->field('updated_at', __('Ngày cập nhật'));
-
+            $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableList();
+                $tools->disableDelete();
+            });;
             return $show;
         }
     }
+
     /**
      * Make a form builder.
      *
@@ -134,6 +137,7 @@ class Edu_StudentReportDetailController extends AdminController
         $lastHomeworkOptions = (new UtilsCommonHelper)->commonCode("Edu", "LastHomework", "description_vi", "value");
         $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
         $statusDefault = $statusOptions->keys()->first();
+
         $form = new Form(new EduStudentReportDetail());
         $form->select('harkwork', __('Chuyên cần'))->options($harkWorkOptions);
         $form->select('last_homework', __('Bài tập cuối'))->options($lastHomeworkOptions);
@@ -145,6 +149,12 @@ class Edu_StudentReportDetailController extends AdminController
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
             $tools->disableList();
+        });
+        $form->saved(function (Form $form) {
+            admin_toastr('Lưu thành công!');
+            $id = request()->route()->parameter('report_detail');
+            $studentReportId = $form->model()->find($id)->getOriginal("student_report_id");
+            return redirect("/admin/edu/report-student/{$studentReportId}");
         });
         return $form;
     }

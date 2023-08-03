@@ -27,6 +27,7 @@ Route::get('class/get-by-id', 'ClassController@getById');
 Route::get('student', 'StudentController@find');
 Route::get('schedule', 'ScheduleController@find');
 Route::get('schedule/get-by-id', 'ScheduleController@getById');
+Route::get('admin/edu/report-student/{id}', 'Edu_ReportOfStudentController@show')->name('admin.edu.report-student.show');
 
 
 
