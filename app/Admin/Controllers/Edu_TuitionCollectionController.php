@@ -140,24 +140,29 @@ class Edu_TuitionCollectionController extends AdminController{
             $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
             $studentId = $form->model()->find($id)->getOriginal("student_id");
 
-            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required();
-            $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required();
-            $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId)->required();
+            $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required()->readonly();
+            $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required()->readonly();
+            $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId)->required()->readonly();
+            $form->date('processing_date', __('Ngày đóng tiền'))->required()->readonly();
+            $form->date('value_date', __('Ngày bắt đầu học'))->required()->readonly();
+            $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required()->readonly();
+            $form->text('amount', __('Số buổi'))->required()->readonly();
+            $form->currency('value', __('Giá trị'))->symbol('VND')->disable()->readonly();
+            $form->select('account_id', __('Số tài khoản'))->options($account)->required()->readonly();
+            $form->text('description', __('Mô tả'))->readonly();
         }else{
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();
             $form->text('class_name', __('Tên lớp học'))->disable()->required();
             $form->select('student_id', __('Tên học sinh'))->options()->required();
+            $form->date('processing_date', __('Ngày đóng tiền'))->required();
+            $form->date('value_date', __('Ngày bắt đầu học'))->required();
+            $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required();
+            $form->text('amount', __('Số buổi'))->required();
+            $form->currency('value', __('Giá trị'))->symbol('VND')->disable();
+            $form->select('account_id', __('Số tài khoản'))->options($account)->required();
+            $form->text('description', __('Mô tả'));
         }
-
-        $form->date('processing_date', __('Ngày đóng tiền'))->required();
-        $form->date('value_date', __('Ngày bắt đầu học'))->required();
-        $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required();
-        $form->text('amount', __('Số buổi'))->required();
-        $form->currency('value', __('Giá trị'))->symbol('VND')->disable();
-        $form->select('account_id', __('Số tài khoản'))->options($account)->required();
-        $form->text('description', __('Mô tả'));
-
         if ($form->isEditing()) {
             $id = request()->route()->parameter('tuition_collection');
             $recordStatus = $form->model()->find($id)->getOriginal("status");
