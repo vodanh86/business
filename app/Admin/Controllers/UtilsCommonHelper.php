@@ -41,21 +41,22 @@ class UtilsCommonHelper
     }
     //Kiem tra ten lai(doi lai)
     public static function statusFormatter($value, $group, $isGrid)
-    {
+    {   
+        $result = $value ? $value : 0;
         if ($group === "Core") {
             $commonCode = CommonCode::where('group', $group)
                 ->where('type', 'Status')
-                ->where('value', $value)
+                ->where('value', $result)
                 ->first();
         } else {
             $commonCode = CommonCode::where('business_id', Admin::user()->business_id)
                 ->where('group', $group)
                 ->where('type', 'Status')
-                ->where('value', $value)
+                ->where('value', $result)
                 ->first();
         }
         if ($commonCode && $isGrid === "grid") {
-            return $value === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
+            return $result === 1 ? "<span class='label label-success'>$commonCode->description_vi</span>" : "<span class='label label-danger'>$commonCode->description_vi</span>";
         }
         return $commonCode->description_vi;
     }

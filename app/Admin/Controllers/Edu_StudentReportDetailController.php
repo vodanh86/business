@@ -54,7 +54,9 @@ class Edu_StudentReportDetailController extends AdminController
         $grid->column('home_work', __('Bài tập về nhà'));
         $grid->column('comment', __('Bình luận'));
         $grid->column('parent_comment', __('Bố mẹ bình luận'));
-        $grid->column('status', __('Trạng thái'))->display($status);
+        $grid->column('status', __('Trạng thái'))->display(function ($status) {
+            return UtilsCommonHelper::statusGridFormatter($status);
+        });
         $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
             return date('d/m/Y - H:i:s', strtotime($createdAt));
         });
