@@ -139,7 +139,8 @@ class Edu_TuitionCollectionController extends AdminController{
             $scheduleId = $form->model()->find($id)->getOriginal("schedule_id");
             $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
             $studentId = $form->model()->find($id)->getOriginal("student_id");
-
+            $accountId = $form->model()->find($id)->getOriginal("account_id");
+            
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required()->readonly();
             $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required()->readonly();
             $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId)->required()->readonly();
@@ -148,7 +149,7 @@ class Edu_TuitionCollectionController extends AdminController{
             $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required()->readonly();
             $form->text('amount', __('Số buổi'))->required()->readonly();
             $form->currency('value', __('Giá trị'))->symbol('VND')->disable()->readonly();
-            $form->select('account_id', __('Số tài khoản'))->options($account)->required()->readonly();
+            $form->select('account_id', __('Số tài khoản'))->options($account)->default($accountId)->required()->readonly();
             $form->text('description', __('Mô tả'))->readonly();
         }else{
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
