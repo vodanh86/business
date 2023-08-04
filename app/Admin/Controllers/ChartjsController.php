@@ -3,18 +3,44 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Models\Edu\EduStudent;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Box;
+use Illuminate\Support\Facades\DB;
 
 class ChartjsController extends Controller
 {
     public function index(Content $content)
     {
+        $result = DB::select("
+        SELECT 
+            esc.name, count(est.id) count_student 
+        FROM 
+            business.edu_student est 
+        INNER JOIN  
+            business.edu_schedule esc 
+        ON 
+            est.schedule_id = esc.id
+        WHERE 
+            est.business_id = ?
+        GROUP BY 
+            esc.name;
+        ",[Admin::user()->business_id]);
+
+        $labels = [];
+        $data = [];
+        foreach ($result as $label) {
+            
+            $labels[] = $label->name;
+            $data[] = $label->count_student;
+        }
         $chartLineData = [
-            'labels' => ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
-            'data' => [12, 19, 3, 5, 2, 3],
+            'labels' => $labels,
+            'data' => $data
         ];
+
+
 
         $chartPieData = [
             'labels' => ['Lớp học', 'Học sinh', 'Lịch học', 'Giảng viên', 'Nhân sự', 'Đăng ký nghỉ', "Báo cáo học sinh"],
