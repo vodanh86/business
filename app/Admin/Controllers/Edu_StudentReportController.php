@@ -31,7 +31,7 @@ class Edu_StudentReportController extends AdminController
             if (!$value) return;
             // https://business.metaverse-solution.vn/admin/edu/report-student/$value
             // http://127.0.0.1:8000/admin/edu/report-student/$value
-            return "<a href='http://127.0.0.1:8000/admin/edu/report-student/$value' style='text-decoration: underline'>Báo cáo chi tiết</a>";
+            return "<a href='https://business.metaverse-solution.vn/admin/edu/report-student/$value' style='text-decoration: underline'>Báo cáo chi tiết</a>";
         };
 
         $grid = new Grid(new EduStudentReport());
