@@ -78,7 +78,7 @@ class UtilsCommonHelper
     {
         $bankAccount =  Account::where('id', $accountNumber)->first();
         if ($bankAccount && $isGrid === "grid") {
-            return "<span class='label label-primary'>$bankAccount->bank_name - $bankAccount->number</span>";
+            return "<span class='badge badge-primary'>$bankAccount->bank_name - $bankAccount->number</span>";
         } else if ($bankAccount) {
             return "$bankAccount->bank_name - $bankAccount->number";
         } else {

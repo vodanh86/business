@@ -8,7 +8,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
-class Edu_StudentReportController extends AdminController{
+
+
+class Edu_StudentReportController extends AdminController
+{
 
     /***
      * Title for current resource.
@@ -25,16 +28,16 @@ class Edu_StudentReportController extends AdminController{
     protected function grid()
     {
         $reportDetailURL = function ($value) {
-            if(!$value) return;
+            if (!$value) return;
             // https://business.metaverse-solution.vn/admin/edu/report-student/$value
             // http://127.0.0.1:8000/admin/edu/report-student/$value
-            return "<a href='https://business.metaverse-solution.vn/admin/edu/report-student/$value' style='text-decoration: underline'>Báo cáo chi tiết</a>";
+            return "<a href='http://127.0.0.1:8000/admin/edu/report-student/$value' style='text-decoration: underline'>Báo cáo chi tiết</a>";
         };
 
         $grid = new Grid(new EduStudentReport());
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('schedule.name', __('Lịch học'));
-        $grid->column('type', __('Loại báo cáo'))->display(function($type){
+        $grid->column('type', __('Loại báo cáo'))->display(function ($type) {
             return UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $type);
         });
         $grid->column('report_date', __('Ngày báo cáo'))->display(function ($reportDate) {
@@ -54,7 +57,7 @@ class Edu_StudentReportController extends AdminController{
         return $grid;
     }
 
-     /**
+    /**
      * Make a show builder.
      *
      * @param mixed $id
@@ -78,11 +81,11 @@ class Edu_StudentReportController extends AdminController{
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
-       
+
         return $show;
     }
 
-     /**
+    /**
      * Make a form builder
      *
      * @return Form
@@ -106,7 +109,7 @@ class Edu_StudentReportController extends AdminController{
 
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required();
-        }else{
+        } else {
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required();
         }

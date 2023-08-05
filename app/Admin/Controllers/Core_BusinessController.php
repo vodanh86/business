@@ -31,7 +31,7 @@ class Core_BusinessController extends AdminController{
         $grid->column('name', __('Tên'));
         $grid->column('status', __('Trạng thái'))->display(function ($status) {
             return UtilsCommonHelper::statusFormatter($status, "Core", "grid");
-        });        
+        });  
         $grid->column('created_at', __('Ngày tạo'))->display(function ($createdAt) {
             return ConstantHelper::dateFormatter($createdAt);
         });        

@@ -31,8 +31,14 @@ class ConstantHelper
         }
         $carbonDayIn = Carbon::parse($dayIn)->setTimezone('Asia/Bangkok');
         $today = Carbon::now('Asia/Bangkok');
-        if ($carbonDayIn->lessThan($today->subDays(2)) && $type == "nextDate") {
-            return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
+        if ($type == "nextDate") {
+            if ($carbonDayIn->greaterThan($today)) {
+                return "<span class='label label-primary'>{$carbonDayIn->format('d/m/Y')}</span>";
+            } elseif ($carbonDayIn->lessThan($today->subDays(2))) {
+                return "<span class='label label-danger'>{$carbonDayIn->format('d/m/Y')}</span>";
+            } else {
+                return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
+            }
         } else if ($type == "valueDate") {
             if ($carbonDayIn->lessThan($today->subDays(2))) {
                 return "<span class='label label-primary'>{$carbonDayIn->format('d/m/Y')}</span>";

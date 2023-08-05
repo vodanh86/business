@@ -6,6 +6,7 @@ use App\Admin\Grid\CustomEditAction;
 use App\Admin\Grid\CustomViewAction;
 use App\Http\Models\Core\Branch;
 use App\Http\Models\Edu\EduSchedule;
+use App\Http\Models\Edu\EduStudent;
 use App\Http\Models\Edu\EduStudentReport;
 use App\Http\Models\Edu\EduStudentReportDetail;
 use Encore\Admin\Controllers\AdminController;
@@ -14,7 +15,7 @@ use Encore\Admin\Show;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Encore\Admin\Form;
-
+use Encore\Admin\Widgets\Table;
 
 class Edu_StudentReportDetailController extends AdminController
 {
@@ -33,10 +34,6 @@ class Edu_StudentReportDetailController extends AdminController
      */
     protected function grid($student_report_ids = [])
     {
-        $status = function ($value) {
-            return UtilsCommonHelper::commonCodeGridFormatter("Core", "Status", "description_vi", $value);
-        };
-
         $harkwork = function ($value) {
             return UtilsCommonHelper::commonCodeGridFormatter("Edu", "Harkwork", "description_vi", $value);
         };
@@ -47,7 +44,25 @@ class Edu_StudentReportDetailController extends AdminController
 
         $grid = new Grid(new EduStudentReportDetail());
 
-        $grid->column('student.name', __('Tên học sinh'));
+        $grid->column('student.name', __('Tên học sinh'))->modal('Thông tin học sinh', function ($model) {
+
+            $comments = EduStudent::where("id", $model->student_id)->take(10)->get()->map(function ($student) {
+                $grade = UtilsCommonHelper::commonCodeGridFormatter("Edu", "Grade", "description_vi", $student->grade);
+                $channel = UtilsCommonHelper::commonCodeGridFormatter("Edu", "Channel", "description_vi", $student->channel);
+                $wom = UtilsCommonHelper::commonCodeGridFormatter("Edu", "WOM", "description_vi", $student->wom);
+                $location = UtilsCommonHelper::commonCodeGridFormatter("Edu", "Location", "description_vi", $student->location);
+                $school = UtilsCommonHelper::commonCodeGridFormatter("Edu", "School", "description_vi", $student->school);
+
+                $item = $student->only(['name', 'channel', 'wom', 'student_phone_number', 'parent', 'phone_number',]);
+                $item['channel'] = $channel;
+                $item['wom'] = $wom;
+                $item['grade'] = $grade;
+                $item['location'] = $location;
+                $item['school'] = $school;
+                return $item;
+            });
+            return new Table(['Tên học sinh', 'Kênh', 'WOM', 'SĐT học sinh', 'Bố mẹ', 'SĐT bố hoặc mẹ', 'Khối', "Địa chỉ", "Trường"], $comments->toArray());
+        });
         $grid->column('harkwork', __('Chuyên cần'))->display($harkwork);
         $grid->column('last_homework', __('Bài tập cuối'))->display($lastHomework);
         $grid->column('mini_test', __('Kiểm tra ngắn'));

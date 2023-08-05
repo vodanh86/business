@@ -3,6 +3,11 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Models\Core\Account;
+use App\Http\Models\Core\Deduct;
+use App\Http\Models\Core\Entries;
+use App\Http\Models\Core\Topup;
+use App\Http\Models\Core\Transfer;
+use App\Http\Models\Edu\EduExpenditure;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -41,6 +46,14 @@ class Core_AccountController extends AdminController{
         });
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
+        });
+        
+        $usedAccountIds = Entries::pluck('account_id')->toArray();
+        $grid->actions(function ($actions) use ($usedAccountIds) {
+            $accountId = $actions->getKey();
+            if (in_array($accountId, $usedAccountIds)) {
+                $actions->disableDelete();
+            }
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
         return $grid;
