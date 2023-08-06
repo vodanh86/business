@@ -3,19 +3,16 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Models\Core\Account;
-use App\Http\Models\Core\Deduct;
 use App\Http\Models\Core\Entries;
-use App\Http\Models\Core\Topup;
-use App\Http\Models\Core\Transfer;
-use App\Http\Models\Edu\EduExpenditure;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Show;
 
-class Core_AccountController extends AdminController{
-    
+class Core_AccountController extends AdminController
+{
+
     /**
      * Title for current resource.
      *
@@ -30,7 +27,7 @@ class Core_AccountController extends AdminController{
      */
     protected function grid()
     {
-       
+
         $grid = new Grid(new Account());
         $grid->column('bank_name', __('Tên ngân hàng'));
         $grid->column('number', __('Số tài khoản'))->copyable();
@@ -47,7 +44,7 @@ class Core_AccountController extends AdminController{
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
-        
+
         $usedAccountIds = Entries::pluck('account_id')->toArray();
         $grid->actions(function ($actions) use ($usedAccountIds) {
             $accountId = $actions->getKey();
@@ -77,9 +74,19 @@ class Core_AccountController extends AdminController{
         });
         $show->field('created_at', __('Ngày tạo'));
         $show->field('updated_at', __('Ngày cập nhật'));
+
+        $usedAccountIds = Entries::pluck('account_id')->toArray();
+        $show->panel()
+            ->tools(function ($tools) use ($usedAccountIds) {
+                $accountId = request()->route('bankaccount');
+                if (in_array($accountId, $usedAccountIds)) {
+                    $tools->disableDelete();
+                }
+            });
+
         return $show;
     }
-    
+
     /**
      * Make a form builder.
      *
@@ -112,7 +119,15 @@ class Core_AccountController extends AdminController{
                 }
                 return $options;
             })->default($bankName)->required();
-        }else{
+            $usedAccountIds = Entries::pluck('account_id')->toArray();
+
+            $form->tools(function (Form\Tools $tools) use ($usedAccountIds) {
+                $accountId = request()->route('bankaccount');
+                if (in_array($accountId, $usedAccountIds)) {
+                    $tools->disableDelete();
+                }
+            });
+        } else {
             $form->select('bank_name', __('Tên ngân hàng'))->required();
         }
         $form->text('number', __('Số tài khoản'))->required();
@@ -177,7 +192,7 @@ class Core_AccountController extends AdminController{
         });
         EOT;
         Admin::script($script);
-        
+
         return $form;
     }
 }

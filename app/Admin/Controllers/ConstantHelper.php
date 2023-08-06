@@ -40,7 +40,7 @@ class ConstantHelper
                 return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
             }
         } else if ($type == "valueDate") {
-            if ($carbonDayIn->lessThan($today->subDays(2))) {
+            if ($carbonDayIn->lessThan($today)) {
                 return "<span class='label label-primary'>{$carbonDayIn->format('d/m/Y')}</span>";
             } else {
                 return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
