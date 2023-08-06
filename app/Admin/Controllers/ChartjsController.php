@@ -40,8 +40,6 @@ class ChartjsController extends Controller
             'data' => $data
         ];
 
-
-
         $chartPieData = [
             'labels' => ['Lớp học', 'Học sinh', 'Lịch học', 'Giảng viên', 'Nhân sự', 'Đăng ký nghỉ', "Báo cáo học sinh"],
             'data' => [12, 19, 3, 5, 2, 3, 10],

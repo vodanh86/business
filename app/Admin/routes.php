@@ -14,7 +14,8 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
-    $router->get('/', 'ChartjsController@index');
+    $router->get('/', 'HomeController@index');
+    $router->get('/help', 'HelpController@index');
     $router->resource('/core/business', Core_BusinessController::class);
     $router->resource('/core/branch', Core_BranchController::class);
     $router->resource('/core/bankaccount', Core_AccountController::class);
@@ -30,6 +31,7 @@ Route::group([
     $router->resource('/core/adjustment', Core_Adjustment::class);
     $router->resource('/core/deduct', Core_Deduct::class);
     $router->resource('/core/topup', Core_Topup::class);
+    $router->resource('/edu/chart', ChartjsController::class);
     $router->resource('/edu/tuition-collection', Edu_TuitionCollectionController::class);
     $router->resource('/edu/employee', Edu_EmployeeController::class);
     $router->resource('/edu/classes', Edu_ClassController::class);

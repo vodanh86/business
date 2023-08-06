@@ -3,32 +3,21 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
-use Encore\Admin\Controllers\Dashboard;
-use Encore\Admin\Layout\Column;
+use App\Http\Models\AdminUser;
+use App\Http\Models\Core\Branch;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
-use Encore\Admin\Layout\Row;
+use Encore\Admin\Widgets\Box;
 
 class HomeController extends Controller
 {
     public function index(Content $content)
-    {
+    {   
+        $userCount = AdminUser::where('business_id', '=', Admin::user()->business_id)->count();
+        $branchCount = Branch::where('business_id', '=', Admin::user()->business_id)->count();
+
         return $content
-            ->title('Dashboard')
-            ->description('Description...')
-            ->row(Dashboard::title())
-            ->row(function (Row $row) {
-
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::environment());
-                });
-
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::extensions());
-                });
-
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::dependencies());
-                });
-            });
+        ->header('Trang chủ')
+        ->body(new Box('Tổng quan', view('admin.dashboard', compact('userCount', 'branchCount'))));
     }
 }
