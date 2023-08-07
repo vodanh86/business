@@ -101,19 +101,22 @@ class Edu_ApplyLeaveController extends AdminController{
         $form->text('reason', __('Lý do'));
         $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault)->required();
 
-        $urlClass = env('APP_URL') . '/api/schedule';
+        $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
+
         $script = <<<EOT
         $(function() {
             var branchSelect = $(".branch_id");
             var scheduleSelect = $(".schedule_id");
             var optionsSchedule = {};
-
+            
             branchSelect.on('change', function() {
                 scheduleSelect.empty();
                 optionsSchedule = {};
+                $("#class_name").val("")
+
                 var selectedBranchId = $(this).val();
                 if(!selectedBranchId) return
-                $.get("$urlClass", { branch_id: selectedBranchId }, function (schedules) {
+                $.get("$urlSchedule", { branch_id: selectedBranchId }, function (schedules) {
                     var schedulesActive = schedules.filter(function (cls) {
                         return cls.status === 1;
                     });                    
@@ -125,10 +128,10 @@ class Edu_ApplyLeaveController extends AdminController{
                         value: '',
                         text: ''
                     }));
-                    $.each(optionsSchedule, function (id, className) {
+                    $.each(optionsSchedule, function (id, scheduleName) {
                         scheduleSelect.append($('<option>', {
                             value: id,
-                            text: className
+                            text: scheduleName
                         }));
                     });
                     scheduleSelect.trigger('change');
