@@ -34,8 +34,10 @@ class ConstantHelper
         if ($type == "nextDate") {
             if ($carbonDayIn->greaterThan($today)) {
                 return "<span class='label label-primary'>{$carbonDayIn->format('d/m/Y')}</span>";
-            } elseif ($carbonDayIn->lessThan($today->subDays(2))) {
+            } elseif ($carbonDayIn->lessThan($today->subDays(3))) {
                 return "<span class='label label-danger'>{$carbonDayIn->format('d/m/Y')}</span>";
+            } elseif ($carbonDayIn->lessThan($today->subDays(2))) {
+                return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
             } else {
                 return "<span class='label label-warning'>{$carbonDayIn->format('d/m/Y')}</span>";
             }

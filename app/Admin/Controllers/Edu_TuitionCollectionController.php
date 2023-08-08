@@ -154,9 +154,9 @@ class Edu_TuitionCollectionController extends AdminController{
             $form->text('description', __('Mô tả'))->readonly();
         }else{
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
-            $form->select('schedule_id', __('Tên lịch học'))->options()->required();
+            $form->select('schedule_id', __('Tên lịch học'))->options()->required()->disable();
             $form->text('class_name', __('Tên lớp học'))->disable()->required();
-            $form->select('student_id', __('Tên học sinh'))->options()->required();
+            $form->select('student_id', __('Tên học sinh'))->options()->required()->disable();
             $form->date('processing_date', __('Ngày đóng tiền'))->required();
             $form->date('value_date', __('Ngày bắt đầu học'))->required();
             $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required();
@@ -207,7 +207,9 @@ class Edu_TuitionCollectionController extends AdminController{
 
             var branchSelect = $(".branch_id");
             var scheduleSelect = $(".schedule_id");
+            var scheduleSelectDOM = document.querySelector('.schedule_id');
             var studentSelect = $(".student_id");
+            var studentSelectDOM = document.querySelector('.student_id');
             var optionsSchedule = {};
             var optionsStudent = {};
 
@@ -220,6 +222,7 @@ class Edu_TuitionCollectionController extends AdminController{
                 var selectedBranchId = $(this).val();
                 if(!selectedBranchId) return
                 $.get("$urlSchedule", { branch_id: selectedBranchId }, function (schedules) {
+                    scheduleSelectDOM.removeAttribute('disabled');
                     var schedulesActive = schedules.filter(function (cls) {
                         return cls.status === 1;
                     });                    
@@ -244,6 +247,7 @@ class Edu_TuitionCollectionController extends AdminController{
             scheduleSelect.on('change', function() {
 
                 studentSelect.empty();
+                studentSelectDOM.setAttribute("disabled", false);
                 optionsStudent = {};
                 $("#class_name").val("")
 
@@ -257,7 +261,7 @@ class Edu_TuitionCollectionController extends AdminController{
                     });
 
                     $.get("$urlStudent", { schedule_id: schedule.id }, function (students) {
-
+                        studentSelectDOM.removeAttribute('disabled');
                         var studentsActive = students.filter(function (student) {
                             return student.status === 1 && student.schedule_id === schedule.id
                         });

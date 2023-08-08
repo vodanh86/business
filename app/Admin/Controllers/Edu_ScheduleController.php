@@ -11,7 +11,8 @@ use Encore\Admin\Show;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 
-class Edu_ScheduleController extends AdminController{
+class Edu_ScheduleController extends AdminController
+{
 
     /**
      * Title for current resource.
@@ -27,8 +28,8 @@ class Edu_ScheduleController extends AdminController{
      */
     protected function grid()
     {
-        $day = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "daysofweek")->pluck('description_vi','value');
-        
+        $day = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "daysofweek")->pluck('description_vi', 'value');
+
         $grid = new Grid(new EduSchedule());
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('class.name', __('Tên lớp'));
@@ -48,7 +49,7 @@ class Edu_ScheduleController extends AdminController{
             $dayValueType = join(", ", $dayDescriptions);
             return "<span class='label label-primary'>$dayValueType</span>";
         });
-        
+
         $grid->column('start_time', __('Thời gian bắt đầu'));
         $grid->column('end_time', __('Thời gian kết thúc'));
         $grid->column('duration', __('Khoảng thời gian(giờ)'));
@@ -63,7 +64,7 @@ class Edu_ScheduleController extends AdminController{
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
         $grid->fixColumns(0, 0);
-      
+
         return $grid;
     }
 
@@ -76,8 +77,8 @@ class Edu_ScheduleController extends AdminController{
     protected function detail($id)
     {
         $show = new Show(EduSchedule::findOrFail($id));
-        $day = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "daysofweek")->pluck('description_vi','value');
-        
+        $day = CommonCode::where('business_id', Admin::user()->business_id)->where("type", "daysofweek")->pluck('description_vi', 'value');
+
         $show->field('branch.branch_name', __('Tên chi nhánh'));
         $show->field('class.name', __('Tên lớp'));
         $show->field('name', __('Tên lịch học'));
@@ -96,7 +97,7 @@ class Edu_ScheduleController extends AdminController{
         return $show;
     }
 
-     /**
+    /**
      * Make a form builder.
      *
      * @return Form
@@ -121,9 +122,9 @@ class Edu_ScheduleController extends AdminController{
 
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId);
             $form->select('class_id', __('Tên lớp học'))->options($classes)->default($classId);
-        }else{
+        } else {
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
-            $form->select('class_id', __('Tên lớp học'))->options()->required();
+            $form->select('class_id', __('Tên lớp học'))->options()->required()->disable();
         }
         $form->select('teacher_id', __('Tên giảng viên'))->options($teacher)->required();
         $form->text('name', __('Tên lịch học'))->required();
@@ -139,18 +140,21 @@ class Edu_ScheduleController extends AdminController{
         $(function() {
             var branchSelect = $(".branch_id");
             var classSelect = $(".class_id");
+            var classSelectDOM = document.querySelector('.class_id');
             var optionsClass = {};
 
             branchSelect.on('change', function() {
                 classSelect.empty();
                 optionsClass = {};
                 var selectedBranchId = $(this).val();
-                if(!selectedBranchId) return
-                $.get("$urlClass", { branch_id: selectedBranchId }, function (classes) {
-                    var classesActive = classes.filter(function (cls) {
+                if (!selectedBranchId) return;
+
+                $.get("$urlClass", { branch_id: selectedBranchId }, function(classes) {
+                    classSelectDOM.removeAttribute('disabled');
+                    var classesActive = classes.filter(function(cls) {
                         return cls.status === 1;
-                    });                    
-                    $.each(classesActive, function (index, cls) {
+                    });
+                    $.each(classesActive, function(index, cls) {
                         optionsClass[cls.id] = cls.name;
                     });
                     classSelect.empty();
@@ -158,7 +162,7 @@ class Edu_ScheduleController extends AdminController{
                         value: '',
                         text: ''
                     }));
-                    $.each(optionsClass, function (id, className) {
+                    $.each(optionsClass, function(id, className) {
                         classSelect.append($('<option>', {
                             value: id,
                             text: className
@@ -168,7 +172,6 @@ class Edu_ScheduleController extends AdminController{
                 });
             });
         });
-        
         EOT;
         Admin::script($script);
         return $form;

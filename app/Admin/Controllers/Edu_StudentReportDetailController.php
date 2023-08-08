@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Grid\CustomEditAction;
-use App\Admin\Grid\CustomViewAction;
 use App\Http\Models\Core\Branch;
 use App\Http\Models\Edu\EduSchedule;
 use App\Http\Models\Edu\EduStudent;
@@ -12,7 +11,6 @@ use App\Http\Models\Edu\EduStudentReportDetail;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Encore\Admin\Form;
 use Encore\Admin\Widgets\Table;
@@ -67,7 +65,9 @@ class Edu_StudentReportDetailController extends AdminController
         $grid->column('last_homework', __('Bài tập cuối'))->display($lastHomework);
         $grid->column('mini_test', __('Kiểm tra ngắn'));
         $grid->column('home_work', __('Bài tập về nhà'));
-        $grid->column('comment', __('Bình luận'));
+        $grid->column('comment', __('Bình luận'))->display(function($comment){
+            return UtilsCommonHelper::commonCodeGridFormatter("Edu", "CommentStudent", "description_vi", $comment);
+        });
         $grid->column('parent_comment', __('Bố mẹ bình luận'));
         $grid->column('status', __('Trạng thái'))->display(function ($status) {
             return UtilsCommonHelper::statusGridFormatter($status);
@@ -127,7 +127,9 @@ class Edu_StudentReportDetailController extends AdminController
             $show->field('last_homework', __('Bài tập cuối'))->as($lastHomework);
             $show->field('mini_test', __('Kiểm tra ngắn'));
             $show->field('home_work', __('Bài tập về nhà'));
-            $show->field('comment', __('Bình luận'));
+            $show->field('comment', __('Bình luận'))->as(function($comment){
+                return UtilsCommonHelper::commonCodeGridFormatter("Edu", "CommentStudent", "description_vi", $comment);
+            });
             $show->field('parent_comment', __('Bố mẹ bình luận'));
             $show->field('status', __('Trạng thái'))->as(function ($status) {
                 return UtilsCommonHelper::statusDetailFormatter($status);

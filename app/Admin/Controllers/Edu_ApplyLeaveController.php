@@ -93,7 +93,7 @@ class Edu_ApplyLeaveController extends AdminController{
             $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId);
         }else{
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
-            $form->select('schedule_id', __('Tên lịch học'))->options()->required();
+            $form->select('schedule_id', __('Tên lịch học'))->options()->required()->disable();
         }
 
         
@@ -107,6 +107,7 @@ class Edu_ApplyLeaveController extends AdminController{
         $(function() {
             var branchSelect = $(".branch_id");
             var scheduleSelect = $(".schedule_id");
+            var scheduleSelectDOM = document.querySelector('.schedule_id');
             var optionsSchedule = {};
             
             branchSelect.on('change', function() {
@@ -117,6 +118,7 @@ class Edu_ApplyLeaveController extends AdminController{
                 var selectedBranchId = $(this).val();
                 if(!selectedBranchId) return
                 $.get("$urlSchedule", { branch_id: selectedBranchId }, function (schedules) {
+                    scheduleSelectDOM.removeAttribute('disabled');
                     var schedulesActive = schedules.filter(function (cls) {
                         return cls.status === 1;
                     });                    
