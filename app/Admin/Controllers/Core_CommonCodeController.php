@@ -103,8 +103,6 @@ class Core_CommonCodeController extends AdminController
 
         $form = new Form(new CommonCode());
         $form->hidden('business_id')->value($business->id);
-        $form->text('name_business', __('Tên doanh nghiệp'))->disable();
-
         if ($form->isEditing()) {
             $form->tools(function (Form\Tools $tools) {
                 $tools->disableDelete();

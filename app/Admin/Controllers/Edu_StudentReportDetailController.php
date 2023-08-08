@@ -152,6 +152,9 @@ class Edu_StudentReportDetailController extends AdminController
     {
         $harkWorkOptions = (new UtilsCommonHelper)->commonCode("Edu", "Harkwork", "description_vi", "value");
         $lastHomeworkOptions = (new UtilsCommonHelper)->commonCode("Edu", "LastHomework", "description_vi", "value");
+        $commentStudentOptions = (new UtilsCommonHelper)->commonCode("Edu", "CommentStudent", "description_vi", "value");
+
+
         $statusOptions = (new UtilsCommonHelper)->commonCode("Core", "Status", "description_vi", "value");
         $statusDefault = $statusOptions->keys()->first();
 
@@ -160,7 +163,7 @@ class Edu_StudentReportDetailController extends AdminController
         $form->select('last_homework', __('Bài tập cuối'))->options($lastHomeworkOptions);
         $form->textarea('mini_test', __('Kiểm tra ngắn'));
         $form->textarea('home_work', __('Bài tập về nhà'));
-        $form->textarea('comment', __('Bình luận học sinh'));
+        $form->select('comment', __('Bình luận học sinh'))->options($commentStudentOptions);
         $form->textarea('parent_comment', __('Bố mẹ bình luận'));
         $form->select('status', __('Trạng thái'))->options($statusOptions)->default($statusDefault);
         $form->tools(function (Form\Tools $tools) {
