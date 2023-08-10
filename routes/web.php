@@ -16,5 +16,5 @@ Route::fallback(function () {
     return redirect(url('/admin'));
 });
 // Route::get('/', function () {
-//     return view('welcome');
+//     return view('website.pages.home.main');
 // });

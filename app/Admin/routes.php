@@ -1,5 +1,6 @@
 <?php
 
+use App\Admin\Controllers\CustomOperatorLogController;
 use App\Admin\Controllers\CustomUserController;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Routing\Router;
@@ -8,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Admin::routes();
 
 Route::resource('admin/auth/users', CustomUserController::class)->middleware(config('admin.route.middleware'));
+Route::resource('admin/auth/logs', CustomOperatorLogController::class)->middleware(config('admin.route.middleware'));
 Route::group([
     'prefix'        => config('admin.route.prefix'),
     'namespace'     => config('admin.route.namespace'),
