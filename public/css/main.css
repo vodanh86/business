@@ -1,0 +1,17 @@
+@media (min-width: 768px) {
+
+    .sidebar-mini.sidebar-collapse .sidebar-menu>li:hover>a>span:not(.pull-right),.sidebar-mini.sidebar-collapse .sidebar-menu>li:hover>.treeview-menu {
+        display: block !important;
+        position: absolute;
+        min-width: 180px!important;
+        width: auto!important;
+        left: 50px
+    }
+}
+
+.report-result td{
+    border: 1px solid black!important;
+}
+.report-result th{
+    border: 1px solid black!important;
+}

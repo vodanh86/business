@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Http\Models\Edu\EduStudent;
 use App\Http\Models\Edu\EduTuitionCollection;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -66,6 +67,12 @@ class Edu_TuitionCollectionController extends AdminController{
         $grid->model()->orderBy("next_date");
         $grid->fixColumns(0, 0);
 
+        $grid->filter(function (Grid\Filter $filter) {
+            $filter->disableIdFilter();
+            // $studentsWithMatchingId = EduStudent::whereRaw('student_id = id');
+            // $filter->equal('student_id', 'Học sinh')->select($studentsWithMatchingId);
+            $filter->date('processing_date', 'Ngày nộp tiền');
+        });
         return $grid;
     }
 

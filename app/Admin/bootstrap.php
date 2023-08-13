@@ -17,9 +17,11 @@
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
+Use Encore\Admin\Admin;
 use Encore\Admin\Facades\Admin as AdminFacade;
 
 Encore\Admin\Form::forget(['map', 'editor']);
+Admin::css(env('APP_URL').'/css/main.css');
 AdminFacade::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
     $navbar->right(new \App\Admin\Extensions\Nav\Links());
 });

@@ -18,6 +18,7 @@ Route::group([
 ], function (Router $router) {
     $router->get('/', 'HomeController@index');
     $router->get('/help', 'HelpController@index');
+    $router->get('/edu-reports', 'ReportController@eduReport');
     $router->resource('/core/business', Core_BusinessController::class);
     $router->resource('/core/branch', Core_BranchController::class);
     $router->resource('/core/bankaccount', Core_AccountController::class);
@@ -45,6 +46,4 @@ Route::group([
     $router->resource('/edu/student-report', Edu_StudentReportController::class);
     $router->resource('/edu/report-detail', Edu_StudentReportDetailController::class);
     $router->resource('/edu/report-student', Edu_ReportOfStudentController::class);
-
-
 });
