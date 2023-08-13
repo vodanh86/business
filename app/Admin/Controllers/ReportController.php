@@ -7,9 +7,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Widgets\Tab;
 use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Facades\Admin;
 use App\Exports\ReportExport;
-use App\Http\Models\AdminUser;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -39,22 +37,24 @@ class ReportController extends AdminController
             
             if ($data["type"] == "l") {
             } else {
-                $headers = ['Số thứ tự', 'Tên học sinh', 'Số buổi đi học', 'Số tiền một buổi', 'Tổng tiền',];
                 $results = DB::select("call RevenueDetail(?, ?)", [$data["from_date"], $data["to_date"]]);
 
                 $sum = [0, 0];
                 foreach ($results as $i => $row) {
+                    $sum[0] = $i + 1;
                     $sum[1] += $row->amount;
                 }
+                $conceptReport = "Nghiệm thu: " . number_format($sum[1]) . " VND - " . $sum[0] . " học sinh";
+
+                $headers = [$conceptReport, 'Số thứ tự', 'Tên học sinh', 'Số buổi đi học', 'Số tiền một buổi', 'Tổng tiền'];
 
                 $rows = [];
                 foreach ($results as $student => $row) {
                     $formattedUnitPrice = ConstantHelper::moneyFormatter($row->unit_price);
                     $formattedAmount = ConstantHelper::moneyFormatter($row->amount);
                     $iterationIndex = $student + 1;
-                    $sum[0] = $iterationIndex;
-
                     $rows[] = [
+                        "",
                         $iterationIndex,
                         $row->name, 
                         $row->cnt, 
@@ -62,7 +62,6 @@ class ReportController extends AdminController
                         $formattedAmount
                     ];
                 }
-                $rows[] = ["Tổng cộng", $sum[0] . " học sinh", number_format($sum[1]) . " VND"];
             }
 
             $table = new Table($headers, $rows);
