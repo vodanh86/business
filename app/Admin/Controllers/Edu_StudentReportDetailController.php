@@ -87,7 +87,7 @@ class Edu_StudentReportDetailController extends AdminController
             $actions->append(new CustomEditAction($actions->getKey()));
         });
         $grid->tools(function ($tools) {
-            $tools->append('<a href="javascript:void(0);" class="btn btn-sm btn-info" id="export-word-btn">Xuất file word</a>');
+            $tools->append('<a href="javascript:void(0);" class="btn btn-sm btn-info" id="export-word-btn">Xuất File Word</a>');
         });
         if (!empty($student_report_ids)) {
             $grid->model()->whereIn('id', $student_report_ids);
