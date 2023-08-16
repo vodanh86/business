@@ -44,17 +44,13 @@ class ReportController extends AdminController
                     $sum[0] = $i + 1;
                     $sum[1] += $row->amount;
                 }
-                $conceptReport = "Nghiệm thu: " . number_format($sum[1]) . " VND - " . $sum[0] . " học sinh";
-
-                $headers = [$conceptReport, 'Số thứ tự', 'Tên học sinh', 'Số buổi đi học', 'Số tiền một buổi', 'Tổng tiền'];
-
+                $headers = ['Số thứ tự', 'Tên học sinh', 'Số buổi đi học', 'Số tiền một buổi', 'Tổng tiền'];
                 $rows = [];
                 foreach ($results as $student => $row) {
                     $formattedUnitPrice = ConstantHelper::moneyFormatter($row->unit_price);
                     $formattedAmount = ConstantHelper::moneyFormatter($row->amount);
                     $iterationIndex = $student + 1;
                     $rows[] = [
-                        "",
                         $iterationIndex,
                         $row->name, 
                         $row->cnt, 
@@ -62,6 +58,7 @@ class ReportController extends AdminController
                         $formattedAmount
                     ];
                 }
+                $rows[] = ["Tổng cộng: $sum[0]", "", "", "", number_format($sum[1]) . ' VND'];
             }
 
             $table = new Table($headers, $rows);

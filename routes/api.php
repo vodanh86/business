@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Admin\Controllers\WordExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::match(['get', 'post'], 'export-word', [WordExportController::class, 'exportWord']);
+Route::match(['get', 'post'], 'export-word-data', [WordExportController::class, 'exportWordData']);
 Route::get('business', 'BusinessController@find');
 Route::get('businessType', 'BusinessTypeController@find');
 Route::get('branch', 'BranchController@find');
