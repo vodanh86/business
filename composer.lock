@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "323786dd07b0bd7a5a37d1ab3e56981b",
+    "content-hash": "1aaeb3c803cc421e5a54d753ebc09d56",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1508,6 +1508,63 @@
             "time": "2022-10-10T10:11:09+00:00"
         },
         {
+            "name": "laravel-admin-ext/chartjs",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-admin-extensions/chartjs.git",
+                "reference": "3a12f9907c9d4ba59cdd1c9033e67325a337469f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-admin-extensions/chartjs/zipball/3a12f9907c9d4ba59cdd1c9033e67325a337469f",
+                "reference": "3a12f9907c9d4ba59cdd1c9033e67325a337469f",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "*",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Encore\\Chartjs\\ChartjsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Encore\\Chartjs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "song",
+                    "email": "zosong@126.com"
+                }
+            ],
+            "description": "Use Chartjs in laravel-admin",
+            "homepage": "https://github.com/laravel-admin-ext/chartjs",
+            "keywords": [
+                "chartjs",
+                "extension",
+                "laravel-admin"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel-admin-extensions/chartjs/issues",
+                "source": "https://github.com/laravel-admin-extensions/chartjs/tree/master"
+            },
+            "time": "2018-09-16T17:28:26+00:00"
+        },
+        {
             "name": "laravel/framework",
             "version": "v7.30.6",
             "source": {
@@ -2571,6 +2628,65 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v4.17.1"
             },
             "time": "2023-08-13T19:53:39+00:00"
+        },
+        {
+            "name": "nim4n/custom-actions-button",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nim4n136/custom-actions-button.git",
+                "reference": "555796397a5476ceebc631b88d4625aaa348140c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nim4n136/custom-actions-button/zipball/555796397a5476ceebc631b88d4625aaa348140c",
+                "reference": "555796397a5476ceebc631b88d4625aaa348140c",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": ">=1.7.3",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Encore\\CustomActionsButton\\CustomActionsButtonServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Encore\\CustomActionsButton\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "NIM4N",
+                    "email": "nim4n136@gmail.com"
+                }
+            ],
+            "description": "Custom actions button for laravel-admin extenstion",
+            "homepage": "https://github.com/nim4n136/custom-actions-button",
+            "keywords": [
+                "custom-actions-button",
+                "extension",
+                "laravel-admin",
+                "laravel-admin-ext"
+            ],
+            "support": {
+                "issues": "https://github.com/nim4n136/custom-actions-button/issues",
+                "source": "https://github.com/nim4n136/custom-actions-button/tree/master"
+            },
+            "abandoned": true,
+            "time": "2019-08-28T17:37:33+00:00"
         },
         {
             "name": "opis/closure",
