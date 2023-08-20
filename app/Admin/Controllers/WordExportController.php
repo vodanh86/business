@@ -50,6 +50,7 @@ class WordExportController extends AdminController
 
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
         $section = $phpWord->addSection();
+        $section->addText('Cập nhật sau buổi học');
         $section->addText('Loại báo cáo: ' . $this->encodeSpecialCharacters($data[0]['type']));
         $section->addText('Ngày báo cáo: ' . $this->encodeSpecialCharacters($data[0]['report_date']));
         $section->addText('Tên bài giảng: ' . $this->encodeSpecialCharacters($data[0]['lesson_name']));
@@ -57,6 +58,7 @@ class WordExportController extends AdminController
         
         $table = $section->addTable();
         $table->addRow();
+        $table->addCell(4000)->addText('No');
         $table->addCell(4000)->addText('Tên học sinh');
         $table->addCell(4000)->addText('Chuyên cần');
         $table->addCell(4000)->addText('Bài tập cuối');
@@ -65,6 +67,7 @@ class WordExportController extends AdminController
 
         foreach (array_slice($data, 1) as $row) {
             $table->addRow();
+            $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['student_name'])); ///
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['student_name']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['harkwork']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['last_homework']));
