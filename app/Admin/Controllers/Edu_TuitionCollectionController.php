@@ -2,15 +2,16 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Edu\EduStudent;
 use App\Http\Models\Edu\EduTuitionCollection;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Support\Facades\DB;
 
-class Edu_TuitionCollectionController extends AdminController{
+class Edu_TuitionCollectionController extends AdminController
+{
 
     /**
      * Title for current resource.
@@ -59,24 +60,26 @@ class Edu_TuitionCollectionController extends AdminController{
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
-        $grid->model()->where('business_id', '=', Admin::user()->business_id);
-       
+        $grid->model()
+            ->select('id','trans_ref', 'business_id', 'branch_id', 'schedule_id', 'student_id', 'processing_date', 'value_date', 'next_date', 'amount', 'unit_price', 'value', 'account_id', 'status', 'created_at', 'updated_at')
+            ->whereIn('created_at', function ($query) {
+                $query->selectRaw('MAX(created_at)')
+                    ->from('edu_tuition_collection')
+                    ->groupBy('student_id');
+        });
         $grid->actions(function ($actions) {
             $actions->disableDelete();
         });
         $grid->model()->orderBy("next_date");
         $grid->fixColumns(0, 0);
-
         $grid->filter(function (Grid\Filter $filter) {
             $filter->disableIdFilter();
-            // $studentsWithMatchingId = EduStudent::whereRaw('student_id = id');
-            // $filter->equal('student_id', 'Học sinh')->select($studentsWithMatchingId);
-            $filter->date('processing_date', 'Ngày nộp tiền');
+            $filter->equal('trans_ref', 'Mã giao dịch');
         });
         return $grid;
     }
 
-     /**
+    /**
      * Make a show builder.
      *
      * @param mixed $id
@@ -118,11 +121,10 @@ class Edu_TuitionCollectionController extends AdminController{
         $show->panel()
             ->tools(function ($tools) {
                 $tools->disableDelete();
-        });;
+            });;
         return $show;
     }
-    
-     /**
+    /**
      * Make a form builder.
      *
      * @return Form
@@ -148,7 +150,7 @@ class Edu_TuitionCollectionController extends AdminController{
             $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
             $studentId = $form->model()->find($id)->getOriginal("student_id");
             $accountId = $form->model()->find($id)->getOriginal("account_id");
-            
+
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required()->readonly();
             $form->select('schedule_id', __('Tên lịch học'))->options($schedules)->default($scheduleId)->required()->readonly();
             $form->select('student_id', __('Tên học sinh'))->options($students)->default($studentId)->required()->readonly();
@@ -159,7 +161,7 @@ class Edu_TuitionCollectionController extends AdminController{
             $form->currency('value', __('Giá trị'))->symbol('VND')->disable()->readonly();
             $form->select('account_id', __('Số tài khoản'))->options($account)->default($accountId)->required()->readonly();
             $form->text('description', __('Mô tả'))->readonly();
-        }else{
+        } else {
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->required();
             $form->select('schedule_id', __('Tên lịch học'))->options()->required()->disable();
             $form->text('class_name', __('Tên lớp học'))->disable()->required();
@@ -185,7 +187,14 @@ class Edu_TuitionCollectionController extends AdminController{
         } else {
             $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
         }
-        
+        $form->saved(function (Form $form) {
+            $studentId = $form->model()->student_id;
+            EduTuitionCollection::where('student_id', $studentId)
+                ->where('id', '<>', $form->model()->id)
+                ->where('status', '<>', 3)
+                ->update(['status' => 3]);
+        });
+
         $urlSchedule = 'https://business.metaverse-solution.vn/api/schedule';
         $urlScheduleById = 'https://business.metaverse-solution.vn/api/schedule/get-by-id';
         $urlClassById = 'https://business.metaverse-solution.vn/api/class/get-by-id';

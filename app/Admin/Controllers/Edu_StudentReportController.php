@@ -18,7 +18,7 @@ class Edu_StudentReportController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Báo cáo học sinh';
+    protected $title = 'Báo cáo học tập';
 
     /***
      * Make a grid builder.

@@ -105,7 +105,6 @@ class Edu_StudentReportDetailController extends AdminController
             document.getElementById("export-word-btn").addEventListener("click", function() {
                 const params = new URLSearchParams();
                 params.append('q', idStudentReport);
-        
                 fetch("$urlExportWordData", {
                     method: "POST",
                     headers: {

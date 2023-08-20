@@ -36,9 +36,11 @@ Route::group([
     $router->resource('/core/topup', Core_Topup::class);
     $router->resource('/edu/chart', ChartjsController::class);
     $router->resource('/edu/tuition-collection', Edu_TuitionCollectionController::class);
+    $router->resource('/edu/history-tuition-collection', Edu_HistoryTuitionCollectionController::class);
     $router->resource('/edu/employee', Edu_EmployeeController::class);
     $router->resource('/edu/classes', Edu_ClassController::class);
     $router->resource('/edu/student', Edu_StudentController::class);
+    $router->resource('/edu/student-reservation', Edu_StudentReservationController::class);
     $router->resource('/edu/teacher', Edu_TeacherController::class);
     $router->resource('/edu/schedule', Edu_ScheduleController::class);
     $router->resource('/edu/apply-leave', Edu_ApplyLeaveController::class);
