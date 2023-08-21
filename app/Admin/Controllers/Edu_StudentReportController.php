@@ -41,7 +41,7 @@ class Edu_StudentReportController extends AdminController
             return UtilsCommonHelper::commonCodeGridFormatter("Edu", "ReportType", "description_vi", $type);
         });
         $grid->column('report_date', __('Ngày báo cáo'))->display(function ($reportDate) {
-            return ConstantHelper::dateFormatter($reportDate);
+            return ConstantHelper::dayFormatter($reportDate);
         });
         $grid->column('lesson_name', __('Tên bài giảng'));
         $grid->column('id', __('Báo cáo chi tiết'))->display($reportDetailURL);

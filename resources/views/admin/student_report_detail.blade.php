@@ -8,6 +8,10 @@
             <span>{{ $typeReport }}</span>
         </div>
         <div>
+            <strong>Ngày báo cáo:</strong>
+            <span>{{ $report['report_date'] }}</span>
+        </div>
+        <div>
             <strong>Tên chi nhánh:</strong> 
             <span>{{ $branch->branch_name }}</span>
         </div>

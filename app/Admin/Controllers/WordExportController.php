@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Models\Core\CommonCode;
+use App\Http\Models\Edu\EduSchedule;
 use App\Http\Models\Edu\EduStudentReport;
 use App\Http\Models\Edu\EduStudentReportDetail;
 use Encore\Admin\Controllers\AdminController;
@@ -23,7 +24,9 @@ class WordExportController extends AdminController
         }
         $reportOverview = EduStudentReport::where("id", $student_report_ids)->get();
         $dataReportOverview = $reportOverview->map(function ($report) {
+            $schedule = EduSchedule::all()->where("id", $report->schedule_id)->first();
             return [
+                'schedule' => $schedule,
                 'type' => CommonCode::where('business_id', 1)->where('group', "Edu")->where('type', "ReportType")->where('value', $report->type)->pluck("description_vi")->first(),
                 'report_date' => $report->report_date,
                 'lesson_name' => $report->lesson_name,
@@ -53,6 +56,7 @@ class WordExportController extends AdminController
         $section->addText('Cập nhật sau buổi học');
         $section->addText('Loại báo cáo: ' . $this->encodeSpecialCharacters($data[0]['type']));
         $section->addText('Ngày báo cáo: ' . $this->encodeSpecialCharacters($data[0]['report_date']));
+        $section->addText('Tên lịch học: ' . $this->encodeSpecialCharacters($data[0]['schedule']));
         $section->addText('Tên bài giảng: ' . $this->encodeSpecialCharacters($data[0]['lesson_name']));
         $section->addText('Bài tập về nhà: ' . $this->encodeSpecialCharacters($data[0]['home_work']));
         

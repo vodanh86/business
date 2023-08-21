@@ -2,8 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Business;
-use Encore\Admin\Facades\Admin;
 
 abstract class Constant
 {
@@ -20,7 +18,5 @@ abstract class Constant
 
     //Hieu luc
     //Lich su la khi co ban ghi moi
-
-
 }
 
