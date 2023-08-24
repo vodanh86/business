@@ -2,10 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Models\Core\Account;
-use App\Http\Models\Core\Branch;
-use App\Http\Models\Core\Business;
-use App\Http\Models\Core\CommonCode;
 use App\Http\Models\Core\Expense;
 use App\Http\Models\Edu\EduClass;
 use App\Http\Models\Edu\EduExpenditure;
@@ -38,7 +34,14 @@ class Edu_ExpenditureController extends AdminController
         $grid->column('trans_ref', __('Mã giao dịch'));
         $grid->column('branch.branch_name', __('Tên chi nhánh'));
         $grid->column('expense.name', __('Chi phí'));
-        $grid->column('class.name', __('Tên lớp học'));
+        $grid->column('class_id', __('Tên lớp học'))->display(function ($classId) {
+            if ($classId == 0) {
+                return 'Toàn bộ';
+            } else {
+                $className = EduClass::where("id", $classId)->pluck("name")->first();
+                return $className;
+            }
+        });
         $grid->column('account_id', __('Số tài khoản'))->display(function ($accountNumber) {
             return UtilsCommonHelper::bankAccountGridFormatter($accountNumber);
         });
@@ -58,7 +61,7 @@ class Edu_ExpenditureController extends AdminController
             return ConstantHelper::dateFormatter($updatedAt);
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
-        $grid->fixColumns(0,0);
+        $grid->fixColumns(0, 0);
         return $grid;
     }
 
@@ -167,8 +170,8 @@ class Edu_ExpenditureController extends AdminController
                     });
                     classSelect.empty();
                     classSelect.append($('<option>', {
-                        value: '',
-                        text: ''
+                        value: '0',
+                        text: 'Toàn bộ'
                     }));
                     $.each(optionsClass, function (id, className) {
                         classSelect.append($('<option>', {
