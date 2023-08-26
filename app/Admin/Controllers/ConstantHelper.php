@@ -71,8 +71,8 @@ class ConstantHelper
             return "<span class='label label-success'>Hiệu lực</span>";
         } elseif ($value === 2) {
             return "<span class='label label-danger'>Huỷ</span>";
-        } else {
-            return '';
+        } elseif($value === 3) {
+            return "<span class='label label-default'>Lịch sử</span>";
         }
     }
 }
