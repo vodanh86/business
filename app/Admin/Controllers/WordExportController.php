@@ -50,32 +50,34 @@ class WordExportController extends AdminController
     public function exportWord(Request $request)
     {
         $data = json_decode($request->input('data'), true);
+        $stt = 1;
 
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
         $section = $phpWord->addSection();
         $section->addText('Cập nhật sau buổi học');
         $section->addText('Loại báo cáo: ' . $this->encodeSpecialCharacters($data[0]['type']));
         $section->addText('Ngày báo cáo: ' . $this->encodeSpecialCharacters($data[0]['report_date']));
-        $section->addText('Tên lịch học: ' . $this->encodeSpecialCharacters($data[0]['schedule']));
+        $section->addText('Tên lịch học: ' . $this->encodeSpecialCharacters($data[0]['schedule']['name']));
         $section->addText('Tên bài giảng: ' . $this->encodeSpecialCharacters($data[0]['lesson_name']));
         $section->addText('Bài tập về nhà: ' . $this->encodeSpecialCharacters($data[0]['home_work']));
         
         $table = $section->addTable();
         $table->addRow();
-        $table->addCell(4000)->addText('No');
+        $table->addCell(4000)->addText('STT');
         $table->addCell(4000)->addText('Tên học sinh');
         $table->addCell(4000)->addText('Chuyên cần');
         $table->addCell(4000)->addText('Bài tập cuối');
         $table->addCell(4000)->addText('Kiểm tra ngắn');
         $table->addCell(4000)->addText('Bình luận');
-
         foreach (array_slice($data, 1) as $row) {
             $table->addRow();
+            $table->addCell(4000)->addText($stt);
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['student_name']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['harkwork']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['last_homework']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['mini_test']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['comment']));
+            $stt++;
         }
 
         $tempFilePath = tempnam(sys_get_temp_dir(), 'word_export');

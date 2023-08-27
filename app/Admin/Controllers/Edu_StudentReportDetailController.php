@@ -92,7 +92,7 @@ class Edu_StudentReportDetailController extends AdminController
         if (!empty($student_report_ids)) {
             $grid->model()->whereIn('id', $student_report_ids);
         }
-
+        
         $urlExportWordData = 'https://business.metaverse-solution.vn/api/export-word-data';
         $urlExportWord = 'https://business.metaverse-solution.vn/api/export-word';
         $id = Route::current()->parameter('report_student');
