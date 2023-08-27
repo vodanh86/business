@@ -37,6 +37,23 @@ class Edu_ReportController extends AdminController
         if ($data = session('result')) {
 
             if ($data["type"] == "l") {
+                $results = DB::select("call RevenueBySchedule(?, ?)", [$data["from_date"], $data["to_date"]]);
+
+                $sum = [0, 0];
+                foreach ($results as $i => $row) {
+                    $sum[0] = $i + 1;
+                    $sum[1] += $row->total;
+                }
+                $headers = ['Tên lớp', 'Tiền thu được'];
+                $rows = [];
+                foreach ($results as $item => $row) {
+                    $formattedMoneyTotal = ConstantHelper::moneyFormatter($row->total);
+                    $rows[] = [
+                        $row->name,
+                        $formattedMoneyTotal
+                    ];
+                }
+                $rows[] = ["", 'Tổng cộng: ' .number_format($sum[1]) . ' VND'];
             } else {
                 $results = DB::select("call RevenueDetail(?, ?)", [$data["from_date"], $data["to_date"]]);
 
@@ -89,11 +106,11 @@ class Edu_ReportController extends AdminController
             $rows = [];
             foreach ($results as $item => $row) {
                 $formattedCashIn = ConstantHelper::moneyFormatter($row->total_in);
-                $formattedCasOut = ConstantHelper::moneyFormatter($row->total_out);
+                $formattedCashOut = ConstantHelper::moneyFormatter($row->total_out);
                 $rows[] = [
                     $row->month_rpt,
                     $formattedCashIn,
-                    $formattedCasOut
+                    $formattedCashOut
                 ];
             }
 
