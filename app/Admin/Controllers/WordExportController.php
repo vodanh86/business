@@ -71,7 +71,6 @@ class WordExportController extends AdminController
 
         foreach (array_slice($data, 1) as $row) {
             $table->addRow();
-            $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['student_name'])); ///
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['student_name']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['harkwork']));
             $table->addCell(4000)->addText($this->encodeSpecialCharacters($row['last_homework']));
