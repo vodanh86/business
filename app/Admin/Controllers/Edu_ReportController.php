@@ -2,7 +2,8 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Forms\EduReport;
+use App\Admin\Forms\Edu_CashFlowStatementReport;
+use App\Admin\Forms\Edu_RevenueReport;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Widgets\Tab;
@@ -11,7 +12,7 @@ use App\Exports\ReportExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ReportController extends AdminController
+class Edu_ReportController extends AdminController
 {
     /**
      * Title for current resource.
@@ -30,11 +31,11 @@ class ReportController extends AdminController
     public function eduReport(Content $content)
     {
         $content
-            ->title('Báo cáo')
-            ->row(new EduReport());
+            ->title('Báo cáo doanh thu thực hiện')
+            ->row(new Edu_RevenueReport());
 
         if ($data = session('result')) {
-            
+
             if ($data["type"] == "l") {
             } else {
                 $results = DB::select("call RevenueDetail(?, ?)", [$data["from_date"], $data["to_date"]]);
@@ -52,8 +53,8 @@ class ReportController extends AdminController
                     $iterationIndex = $student + 1;
                     $rows[] = [
                         $iterationIndex,
-                        $row->name, 
-                        $row->cnt, 
+                        $row->name,
+                        $row->cnt,
                         $formattedUnitPrice,
                         $formattedAmount
                     ];
@@ -70,11 +71,45 @@ class ReportController extends AdminController
             Excel::store($export, 'public/files/report.xlsx');
 
             $tab->add('Kết quả', "<b>Từ ngày: </b>" . $data['from_date'] . " <b> Đến ngày: </b> " . $data["to_date"] .
-                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table.'</div>');
+                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table . '</div>');
             $content->row($tab);
         }
 
         return $content;
     }
+    public function cashflowStatement(Content $content)
+    {
+        $content
+            ->title('Báo cáo dòng tiền mặt')
+            ->row(new Edu_CashFlowStatementReport());
+        if ($data = session('result')) {
+            $results = DB::select("call edu_cashflow_statement(?, ?)", [$data["from_date"], $data["to_date"]]);
 
+            $headers = ['Báo cáo tháng', 'Dòng tiền vào', 'Dòng tiền ra'];
+            $rows = [];
+            foreach ($results as $item => $row) {
+                $formattedCashIn = ConstantHelper::moneyFormatter($row->total_in);
+                $formattedCasOut = ConstantHelper::moneyFormatter($row->total_out);
+                $rows[] = [
+                    $row->month_rpt,
+                    $formattedCashIn,
+                    $formattedCasOut
+                ];
+            }
+
+            $table = new Table($headers, $rows);
+            $tab = new Tab();
+
+            // store in excel
+            array_unshift($rows, $headers);
+            $export = new ReportExport($rows);
+            Excel::store($export, 'public/files/report.xlsx');
+
+            $tab->add('Kết quả', "<b>Từ ngày: </b>" . $data['from_date'] . " <b> Đến ngày: </b> " . $data["to_date"] .
+                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table . '</div>');
+            $content->row($tab);
+        }
+
+        return $content;
+    }
 }

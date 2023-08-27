@@ -18,7 +18,8 @@ Route::group([
 ], function (Router $router) {
     $router->get('/', 'HomeController@index');
     $router->get('/help', 'HelpController@index');
-    $router->get('/edu-reports', 'ReportController@eduReport');
+    $router->get('/revenue', 'Edu_ReportController@eduReport');
+    $router->get('/cashflow-statement', 'Edu_ReportController@cashflowStatement');
     $router->resource('/core/business', Core_BusinessController::class);
     $router->resource('/core/branch', Core_BranchController::class);
     $router->resource('/core/bankaccount', Core_AccountController::class);

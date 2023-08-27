@@ -8,7 +8,6 @@ use Encore\Admin\Form;
 use Encore\Admin\Show;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
-use Illuminate\Support\Facades\DB;
 
 class Edu_TuitionCollectionController extends AdminController
 {
@@ -149,6 +148,8 @@ class Edu_TuitionCollectionController extends AdminController
             $scheduleId = $form->model()->find($id)->getOriginal("schedule_id");
             $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
             $studentId = $form->model()->find($id)->getOriginal("student_id");
+            dump($students);
+            dump($studentId);
             $accountId = $form->model()->find($id)->getOriginal("account_id");
 
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required()->readonly();
@@ -191,7 +192,7 @@ class Edu_TuitionCollectionController extends AdminController
             $studentId = $form->model()->student_id;
             EduTuitionCollection::where('student_id', $studentId)
                 ->where('id', '<>', $form->model()->id)
-                ->where('status', '<>', 3)
+                ->where('status', 1)
                 ->update(['status' => 3]);
         });
 

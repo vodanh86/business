@@ -5,7 +5,7 @@ namespace App\Admin\Forms;
 use Encore\Admin\Widgets\Form;
 use Illuminate\Http\Request;
 
-class EduReport extends Form
+class Edu_CashFlowStatementReport extends Form
 {
     /**
      * The form title.
@@ -25,7 +25,7 @@ class EduReport extends Form
     {
         $result = array("from_date" => $request->get("from_date"),
                         "to_date" => $request->get("to_date"),
-                        "type" => $request->get("type"));
+                        );
         return back()->with(['result' => $result]);
     }
 
@@ -36,8 +36,6 @@ class EduReport extends Form
     {
         $this->date('from_date', 'Từ ngày')->width(2);
         $this->date('to_date', 'Đến ngày')->width(2);
-        // 'l' => 'Tổng quan ', 
-        $this->radio('type', 'Loại báo cáo')->options(['d' => ' Chi tiết'])->default('l');
     }
 
     /**
