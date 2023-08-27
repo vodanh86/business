@@ -59,13 +59,11 @@ class Edu_TuitionCollectionController extends AdminController
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
+
         $grid->model()
             ->select('id','trans_ref', 'business_id', 'branch_id', 'schedule_id', 'student_id', 'processing_date', 'value_date', 'next_date', 'amount', 'unit_price', 'value', 'account_id', 'status', 'created_at', 'updated_at')
-            ->whereIn('created_at', function ($query) {
-                $query->selectRaw('MAX(created_at)')
-                    ->from('edu_tuition_collection')
-                    ->groupBy('student_id');
-        });
+           ->whereIn("status", [0,1]);
+
         $grid->actions(function ($actions) {
             $actions->disableDelete();
         });
@@ -188,6 +186,7 @@ class Edu_TuitionCollectionController extends AdminController
         } else {
             $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
         }
+
         $form->saved(function (Form $form) {
             $studentId = $form->model()->student_id;
             EduTuitionCollection::where('student_id', $studentId)

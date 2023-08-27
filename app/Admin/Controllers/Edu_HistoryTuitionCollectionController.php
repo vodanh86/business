@@ -33,10 +33,10 @@ class Edu_HistoryTuitionCollectionController extends AdminController
             return ConstantHelper::dayFormatter($processingDate);
         });
         $grid->column('value_date', __('Ngày bắt đầu học'))->display(function ($valueDate) {
-            return ConstantHelper::dayHightLightFormatter($valueDate, "valueDate");
+            return ConstantHelper::dayFormatter($valueDate);
         });
         $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
-            return ConstantHelper::dayHightLightFormatter($nextDate, "nextDate");
+            return ConstantHelper::dayFormatter($nextDate);
         });
         $grid->column('amount', __('Số lượng'));
         $grid->column('unit_price', __('Đơn giá'))->display(function ($unitPrice) {
@@ -57,13 +57,11 @@ class Edu_HistoryTuitionCollectionController extends AdminController
         $grid->column('updated_at', __('Ngày cập nhật'))->display(function ($updatedAt) {
             return ConstantHelper::dateFormatter($updatedAt);
         });
+
         $grid->model()
             ->select('id','trans_ref', 'business_id', 'branch_id', 'schedule_id', 'student_id', 'processing_date', 'value_date', 'next_date', 'amount', 'unit_price', 'value', 'account_id', 'status', 'created_at', 'updated_at')
-            ->whereNotIn('created_at', function ($query) {
-                $query->selectRaw('MAX(created_at)')
-                    ->from('edu_tuition_collection')
-                    ->groupBy('student_id');
-        });
+            ->whereIn("status", [2,3]);
+
         $grid->disableCreateButton();
         $grid->actions(function ($actions) {
             $actions->disableDelete();
