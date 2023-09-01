@@ -53,7 +53,7 @@ class Edu_ReportController extends AdminController
                         $formattedMoneyTotal
                     ];
                 }
-                $rows[] = ["", 'Tổng cộng: ' .number_format($sum[1]) . ' VND'];
+                $rows[] = ["", 'Tổng cộng: ' . number_format($sum[1]) . ' VND'];
             } else {
                 $results = DB::select("call RevenueDetail(?, ?)", [$data["from_date"], $data["to_date"]]);
 
@@ -100,20 +100,66 @@ class Edu_ReportController extends AdminController
             ->title('Báo cáo dòng tiền mặt')
             ->row(new Edu_CashFlowStatementReport());
         if ($data = session('result')) {
-            $results = DB::select("call edu_cashflow_statement(?, ?)", [$data["from_date"], $data["to_date"]]);
-
-            $headers = ['Báo cáo tháng', 'Dòng tiền vào', 'Dòng tiền ra'];
-            $rows = [];
-            foreach ($results as $item => $row) {
-                $formattedCashIn = ConstantHelper::moneyFormatter($row->total_in);
-                $formattedCashOut = ConstantHelper::moneyFormatter($row->total_out);
-                $rows[] = [
-                    $row->month_rpt,
-                    $formattedCashIn,
-                    $formattedCashOut
-                ];
+            if ($data["type"] == "all") {
+                $results = DB::select("call edu_cashflow_statement(?, ?)", [$data["from_date"], $data["to_date"]]);
+                $headers = ['Báo cáo tháng', 'Dòng tiền vào', 'Dòng tiền ra'];
+                $rows = [];
+                foreach ($results as $item => $row) {
+                    $formattedCashIn = ConstantHelper::moneyFormatter($row->total_in);
+                    $formattedCashOut = ConstantHelper::moneyFormatter($row->total_out);
+                    $rows[] = [
+                        $row->month_rpt,
+                        $formattedCashIn,
+                        $formattedCashOut
+                    ];
+                }
+            } else if ($data["type"] == "in") {
+                $results = DB::select("call edu_cashin_statement(?, ?)", [$data["from_date"], $data["to_date"]]);
+                $sum = [0, 0];
+                foreach ($results as $i => $row) {
+                    $sum[0] = $i + 1;
+                    $sum[1] += $row->value;
+                }
+                $headers = ['Tên lịch học', 'Tên học sinh', 'Ngày nộp tiền', 'Số lượng', 'Đơn giá', 'Giá trị', 'Mô tả'];
+                $rows = [];
+                foreach ($results as $item => $row) {
+                    $formattedProcessingDate = ConstantHelper::dayFormatter($row->processing_date);
+                    $formattedUnitPrice = ConstantHelper::moneyFormatter($row->unit_price);
+                    $formattedValue = ConstantHelper::moneyFormatter($row->value);
+                    $rows[] = [
+                        $row->schedule_name,
+                        $row->student_name,
+                        $formattedProcessingDate,
+                        $row->amount,
+                        $formattedUnitPrice,
+                        $formattedValue,
+                        $row->description,
+                    ];
+                }
+                $rows[] = ["", "", "","","", 'Tổng cộng: ' . number_format($sum[1]) . ' VND', ""];
+            }else if ($data["type"] == "out") {
+                $results = DB::select("call edu_cashout_statement(?, ?)", [$data["from_date"], $data["to_date"]]);
+                $sum = [0, 0];
+                foreach ($results as $i => $row) {
+                    $sum[0] = $i + 1;
+                    $sum[1] += $row->amount;
+                }
+                $headers = ['Tên chi phí', 'Loại chi phí', 'Nhóm chi phí', 'Số tiền', 'Ngày thực hiện', 'Mô tả'];
+                $rows = [];
+                foreach ($results as $item => $row) {
+                    $formattedAmount = ConstantHelper::moneyFormatter($row->amount);
+                    $formattedValueDate = ConstantHelper::dayFormatter($row->value_date);
+                    $rows[] = [
+                        $row->expense_name,
+                        $row->expense_type,
+                        $row->expense_group,
+                        $formattedAmount,
+                        $formattedValueDate,
+                        $row->description,
+                    ];
+                }
+                $rows[] = ["", "", "", 'Tổng cộng: ' . number_format($sum[1]) . ' VND', "", ""];
             }
-
             $table = new Table($headers, $rows);
             $tab = new Tab();
 
