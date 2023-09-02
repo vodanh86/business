@@ -40,7 +40,7 @@ class Edu_TuitionCollectionController extends AdminController
         $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
             return ConstantHelper::dayHightLightFormatter($nextDate, "nextDate");
         });
-        $grid->column('amount', __('Số lượng'));
+        $grid->column('amount', __('Số buổi đóng'));
         $grid->column('unit_price', __('Đơn giá'))->display(function ($unitPrice) {
             return ConstantHelper::moneyFormatter($unitPrice);
         });
@@ -99,7 +99,7 @@ class Edu_TuitionCollectionController extends AdminController
         $show->field('next_date', __('Ngày tiếp theo'))->as(function ($nextDate) {
             return ConstantHelper::dayFormatter($nextDate);
         });
-        $show->field('amount', __('Số lượng'));
+        $show->field('amount', __('Số buổi đóng'));
         $show->field('unit_price', __('Đơn giá'))->as(function ($unitPrice) {
             return ConstantHelper::moneyFormatter($unitPrice);
         });
@@ -156,7 +156,7 @@ class Edu_TuitionCollectionController extends AdminController
             $form->date('processing_date', __('Ngày đóng tiền'))->required()->readonly();
             $form->date('value_date', __('Ngày bắt đầu học'))->required()->readonly();
             $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required()->readonly();
-            $form->text('amount', __('Số buổi'))->required()->readonly();
+            $form->text('amount', __('Số buổi đóng'))->required()->readonly();
             $form->currency('value', __('Giá trị'))->symbol('VND')->disable()->readonly();
             $form->select('account_id', __('Số tài khoản'))->options($account)->default($accountId)->required()->readonly();
             $form->text('description', __('Mô tả'))->readonly();
@@ -168,7 +168,7 @@ class Edu_TuitionCollectionController extends AdminController
             $form->date('processing_date', __('Ngày đóng tiền'))->required();
             $form->date('value_date', __('Ngày bắt đầu học'))->required();
             $form->currency('unit_price', __('Đơn giá'))->symbol('VND')->required();
-            $form->text('amount', __('Số buổi'))->required();
+            $form->text('amount', __('Số buổi đóng'))->required();
             $form->currency('value', __('Giá trị'))->symbol('VND')->disable();
             $form->select('account_id', __('Số tài khoản'))->options($account)->required();
             $form->text('description', __('Mô tả'));

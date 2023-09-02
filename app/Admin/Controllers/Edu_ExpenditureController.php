@@ -48,7 +48,7 @@ class Edu_ExpenditureController extends AdminController
         $grid->column('amount', __('Số tiền'))->display(function ($money) {
             return ConstantHelper::moneyFormatter($money);
         });
-        $grid->column('value_date', __('Ngày đóng'))->display(function ($valueDate) {
+        $grid->column('value_date', __('Ngày chi tiêu'))->display(function ($valueDate) {
             return ConstantHelper::dateFormatter($valueDate);
         });
         $grid->column('status', __('Trạng thái'))->display(function ($value) {
@@ -86,7 +86,7 @@ class Edu_ExpenditureController extends AdminController
         $show->field('amount', __('Số tiền'))->as(function ($amount) {
             return ConstantHelper::moneyFormatter($amount);
         });
-        $show->field('value_date', __('Ngày đóng'));
+        $show->field('value_date', __('Ngày chi tiêu'));
         $show->field('description', __('Mô tả'));
         $show->field('status', __('Trạng thái'))->as(function ($status) {
             return ConstantHelper::transactionDetailRecordStatus($status);
@@ -122,7 +122,7 @@ class Edu_ExpenditureController extends AdminController
             $form->select('account_id', __('Số Tài khoản'))->options($bankAccountOptions)->readonly();
             $form->select('expense_id', __('Chi phí'))->options($expense)->readonly();
             $form->currency('amount', __('Số tiền'))->symbol('VND')->readonly();
-            $form->date('value_date', __('Ngày đóng'))->readonly();
+            $form->date('value_date', __('Ngày chi tiêu'))->readonly();
             $form->textarea('description', __('Mô tả'))->readonly();
             if ($status === 0) {
                 $form->select('status', __('Trạng thái'))->options(Constant::RECORDSTATUS_INSERT_AND_UPDATE)->required();
