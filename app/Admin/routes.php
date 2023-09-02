@@ -20,6 +20,8 @@ Route::group([
     $router->get('/help', 'HelpController@index');
     $router->get('/revenue', 'Edu_ReportController@eduReport');
     $router->get('/cashflow-statement', 'Edu_ReportController@cashflowStatement');
+    $router->get('/report/detail-student', 'Edu_ReportController@detailStudentReport');
+    $router->get('/report/attendance-student', 'Edu_ReportController@attendanceReport');
     $router->resource('/core/business', Core_BusinessController::class);
     $router->resource('/core/branch', Core_BranchController::class);
     $router->resource('/core/bankaccount', Core_AccountController::class);
