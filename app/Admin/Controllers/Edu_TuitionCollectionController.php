@@ -37,7 +37,7 @@ class Edu_TuitionCollectionController extends AdminController
         $grid->column('value_date', __('Ngày bắt đầu học'))->display(function ($valueDate) {
             return ConstantHelper::dayHightLightFormatter($valueDate, "valueDate");
         });
-        $grid->column('next_date', __('Ngày tiếp theo'))->display(function ($nextDate) {
+        $grid->column('next_date', __('Ngày hết hạn'))->display(function ($nextDate) {
             return ConstantHelper::dayHightLightFormatter($nextDate, "nextDate");
         });
         $grid->column('amount', __('Số buổi đóng'));
@@ -96,7 +96,7 @@ class Edu_TuitionCollectionController extends AdminController
         $show->field('value_date', __('Ngày bắt đầu học'))->as(function ($valueDate) {
             return ConstantHelper::dayFormatter($valueDate);
         });
-        $show->field('next_date', __('Ngày tiếp theo'))->as(function ($nextDate) {
+        $show->field('next_date', __('Ngày hết hạn'))->as(function ($nextDate) {
             return ConstantHelper::dayFormatter($nextDate);
         });
         $show->field('amount', __('Số buổi đóng'));
@@ -146,8 +146,6 @@ class Edu_TuitionCollectionController extends AdminController
             $scheduleId = $form->model()->find($id)->getOriginal("schedule_id");
             $students = (new UtilsCommonHelper)->optionsStudentByScheduleId($scheduleId);
             $studentId = $form->model()->find($id)->getOriginal("student_id");
-            dump($students);
-            dump($studentId);
             $accountId = $form->model()->find($id)->getOriginal("account_id");
 
             $form->select('branch_id', __('Tên chi nhánh'))->options($branchs)->default($branchId)->required()->readonly();
