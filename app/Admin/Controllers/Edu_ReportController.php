@@ -186,19 +186,19 @@ class Edu_ReportController extends AdminController
             $rows = [];
             foreach ($results as $item => $row) {
                 $rows[] = [
-                            $row->month_report,
-                            $row->schedule_name,
-                            $row->student_id,
-                            $row->student_name,
-                            $row->on_time,
-                            $row->late,
-                            $row->absent,
-                            $row->done,
-                            $row->in_complete,
-                            $row->not_done,
-                            $row->good_attitude,
-                            $row->individual_work,
-                            $row->not_interact_with_class,
+                    $row->month_report,
+                    $row->schedule_name,
+                    $row->student_id,
+                    $row->student_name,
+                    $row->on_time,
+                    $row->late,
+                    $row->absent,
+                    $row->done,
+                    $row->in_complete,
+                    $row->not_done,
+                    $row->good_attitude,
+                    $row->individual_work,
+                    $row->not_interact_with_class,
                 ];
             }
             $table = new Table($headers, $rows);
@@ -209,10 +209,8 @@ class Edu_ReportController extends AdminController
             $export = new ReportExport($rows);
             Excel::store($export, 'public/files/report.xlsx');
 
-            $tab->add(
-                'Kết quả',
-                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table . '</div>'
-            );
+            $tab->add('Kết quả', "<b>Từ ngày: </b>" . $data['from_date'] . " <b> Đến ngày: </b> " . $data["to_date"] .
+                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table . '</div>');
             $content->row($tab);
         }
         return $content;

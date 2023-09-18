@@ -1,7 +1,6 @@
 <?php
 namespace App\Exports;
 
-use App\Invoice;
 use Maatwebsite\Excel\Concerns\FromArray;
 
 class ReportExport implements FromArray
