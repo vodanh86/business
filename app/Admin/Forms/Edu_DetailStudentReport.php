@@ -2,6 +2,7 @@
 
 namespace App\Admin\Forms;
 
+use App\Http\Models\Edu\EduStudent;
 use Encore\Admin\Widgets\Form;
 use Illuminate\Http\Request;
 
@@ -23,9 +24,10 @@ class Edu_DetailStudentReport extends Form
      */
     public function handle(Request $request)
     {
-        $result = array("student_id" => $request->get("student_id"),
-                        "type" => $request->get("type")
-                        );
+        $result = array(
+            "student_id" => $request->get("student_id"),
+            "type" => $request->get("type")
+        );
         return back()->with(['result' => $result]);
     }
 
@@ -34,8 +36,8 @@ class Edu_DetailStudentReport extends Form
      */
     public function form()
     {
-        $this->text('student_id', 'ID học sinh')->width(2);
-        $this->radio('type', 'Loại báo cáo')->options(['detail' => 'Báo cáo chi tiết','tuition_collection' => 'Báo cáo học phí'])->default('detail');
+        $this->select('student_id', 'Học sinh')->options(EduStudent::where('status', 1)->pluck('name', 'id'))->width(2);
+        $this->radio('type', 'Loại báo cáo')->options(['detail' => 'Báo cáo chi tiết', 'tuition_collection' => 'Báo cáo học phí'])->default('detail');
     }
 
     /**

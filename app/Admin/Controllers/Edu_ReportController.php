@@ -143,13 +143,12 @@ class Edu_ReportController extends AdminController
                     $sum[0] = $i + 1;
                     $sum[1] += $row->amount;
                 }
-                $headers = ['ID học sinh', 'Tên lớp học', 'Tên học sinh', 'Số buổi đi học', 'Số tiền một buổi', 'Tổng tiền'];
+                $headers = ['Tên lớp học', 'Tên học sinh', 'Số buổi đi học', 'Số tiền một buổi', 'Tổng tiền'];
                 $rows = [];
                 foreach ($results as $student => $row) {
                     $formattedUnitPrice = ConstantHelper::moneyFormatter($row->unit_price);
                     $formattedAmount = ConstantHelper::moneyFormatter($row->amount);
                     $rows[] = [
-                        $row->student_id,
                         $row->schedule_name,
                         $row->student_name,
                         $row->cnt,
@@ -157,7 +156,7 @@ class Edu_ReportController extends AdminController
                         $formattedAmount
                     ];
                 }
-                $rows[] = ["Tổng cộng: $sum[0]", "", "", "", "", number_format($sum[1]) . ' VND'];
+                $rows[] = ["Tổng cộng: $sum[0]", "", "", "", number_format($sum[1]) . ' VND'];
             }
 
             $table = new Table($headers, $rows);
@@ -182,13 +181,12 @@ class Edu_ReportController extends AdminController
             ->row(new Edu_AttendanceReport());
         if ($data = session('result')) {
             $results = DB::select("call edu_attendance_report(?, ?)", [$data["from_date"], $data["to_date"]]);
-            $headers = ['Tháng báo cáo', 'Tên lớp học', 'ID học sinh', 'Tên học sinh', 'Đúng giờ', 'Đến muộn', 'Nghỉ học', 'Có làm', 'Làm thiếu', 'Không làm', 'Ý thức tốt', 'Làm việc riêng', 'Ko tương tác hoạt động lớp'];
+            $headers = ['Tháng báo cáo', 'Tên lớp học', 'Tên học sinh', 'Đúng giờ', 'Đến muộn', 'Nghỉ học', 'Có làm', 'Làm thiếu', 'Không làm', 'Ý thức tốt', 'Làm việc riêng', 'Ko tương tác hoạt động lớp'];
             $rows = [];
             foreach ($results as $item => $row) {
                 $rows[] = [
                     $row->month_report,
                     $row->schedule_name,
-                    $row->student_id,
                     $row->student_name,
                     $row->on_time,
                     $row->late,
