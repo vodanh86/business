@@ -23,15 +23,15 @@ class ChartjsController extends Controller
         ON 
             est.schedule_id = esc.id
         WHERE 
-            est.business_id = ?
+            est.business_id = ? AND est.status = 1
         GROUP BY 
             esc.name;
-        ",[Admin::user()->business_id]);
+        ", [Admin::user()->business_id]);
 
         $labels = [];
         $data = [];
         foreach ($result as $label) {
-            
+
             $labels[] = $label->name;
             $data[] = $label->count_student;
         }
