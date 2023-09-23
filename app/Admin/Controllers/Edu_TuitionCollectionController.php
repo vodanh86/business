@@ -62,7 +62,10 @@ class Edu_TuitionCollectionController extends AdminController
 
         $grid->model()
             ->select('id','trans_ref', 'business_id', 'branch_id', 'schedule_id', 'student_id', 'processing_date', 'value_date', 'next_date', 'amount', 'unit_price', 'value', 'account_id', 'status', 'created_at', 'updated_at')
-           ->whereIn("status", [0,1]);
+            ->whereIn("status", [0,1])
+            ->whereHas('student', function ($query) {
+            $query->where('status', 1);
+        });
 
         $grid->actions(function ($actions) {
             $actions->disableDelete();
