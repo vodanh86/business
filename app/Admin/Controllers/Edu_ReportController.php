@@ -3,8 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Forms\Edu_AttendanceReport;
+use App\Admin\Forms\Edu_BEPReport;
 use App\Admin\Forms\Edu_CashFlowStatementReport;
 use App\Admin\Forms\Edu_DetailStudentReport;
+use App\Admin\Forms\Edu_IncomeStatementReport;
 use App\Admin\Forms\Edu_RevenueReport;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Table;
@@ -272,6 +274,88 @@ class Edu_ReportController extends AdminController
             );
             $content->row($tab);
         }
+        return $content;
+    }
+    public function incomeStatement(Content $content)
+    {
+        $content
+            ->title('Báo cáo doanh thu tháng')
+            ->row(new Edu_IncomeStatementReport());
+        if ($data = session('result')) {
+            $results = DB::select("call edu_sp_income_statement(?, ?, ?)", [$data["from_date"], $data["to_date"], $data["type"]]);
+            $headers = ['Tháng', 'Doanh thu tháng', 'Doanh thu luỹ kế', 'Doanh thu đã thực hiện', 'Doanh thu chưa thực hiện', 'Chi phí', 'Lợi nhuận'];
+            $rows = [];
+            foreach ($results as $item => $row) {
+                $formattedMonthRevenue = ConstantHelper::moneyFormatter($row->month_revenue);
+                $formattedLastDeferredRevenue = ConstantHelper::moneyFormatter($row->last_deferred_revenue);
+                $formattedRevenue = ConstantHelper::moneyFormatter($row->revenue);
+                $formattedDeferredRevenue = ConstantHelper::moneyFormatter($row->deferred_revenue);
+                $formattedExpenses = ConstantHelper::moneyFormatter($row->expenses);
+                $formattedProfit = ConstantHelper::moneyFormatter($row->profit);
+                $rows[] = [
+                    $row->month,
+                    $formattedMonthRevenue,
+                    $formattedLastDeferredRevenue,
+                    $formattedRevenue,
+                    $formattedDeferredRevenue,
+                    $formattedExpenses,
+                    $formattedProfit,
+                ];
+            }
+            $table = new Table($headers, $rows);
+            $tab = new Tab();
+
+            // store in excel
+            array_unshift($rows, $headers);
+            $export = new ReportExport($rows);
+            Excel::store($export, 'public/files/report.xlsx');
+
+            $tab->add('Kết quả', "<b>Từ ngày: </b>" . $data['from_date'] . " <b> Đến ngày: </b> " . $data["to_date"] .
+                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table . '</div>');
+            $content->row($tab);
+        }
+
+        return $content;
+    }
+    public function BEP(Content $content)
+    {
+        $content
+            ->title('Báo cáo điểm hoà vốn')
+            ->row(new Edu_BEPReport());
+        if ($data = session('result')) {
+            $results = DB::select("call edu_bep(?, ?)", [$data["from_date"], $data["to_date"]]);
+            $headers = ['Tháng(month)', 'Lịch học(schedule)', 'Số lượng học sinh(students)', 'Học phí(tuition_fee)', 'Doanh thu đã thực hiện(revenue)', 'Chi phí biến đổi(variable_cost)', 'Chi phí cứng(fix_cost)', 'Lợi nhuận(profit)', 'Điểm BEP(bep)'];
+            $rows = [];
+            foreach ($results as $item => $row) {
+                $formattedTuitionFee = ConstantHelper::moneyFormatter($row->tuition_fee);
+                $formattedRevenue = ConstantHelper::moneyFormatter($row->revenue);
+                $formattedVariableCost = ConstantHelper::moneyFormatter($row->variable_cost);
+                $formattedFixCost = ConstantHelper::moneyFormatter($row->fix_cost);
+                $formattedProfit = ConstantHelper::moneyFormatter($row->profit);
+                $rows[] = [
+                    $row->month,
+                    $row->schedule,
+                    $row->student,
+                    $formattedTuitionFee,
+                    $formattedVariableCost,
+                    $formattedFixCost,
+                    $formattedRevenue,
+                    $formattedProfit,
+                ];
+            }
+            $table = new Table($headers, $rows);
+            $tab = new Tab();
+
+            // store in excel
+            array_unshift($rows, $headers);
+            $export = new ReportExport($rows);
+            Excel::store($export, 'public/files/report.xlsx');
+
+            $tab->add('Kết quả', "<b>Từ ngày: </b>" . $data['from_date'] . " <b> Đến ngày: </b> " . $data["to_date"] .
+                "<br/>Link download: <a href='" . env('APP_URL') . "/storage/files/report.xlsx' target='_blank'>Link</a><br/><div class='report-result'>" . $table . '</div>');
+            $content->row($tab);
+        }
+
         return $content;
     }
 }

@@ -22,6 +22,8 @@ Route::group([
     $router->get('/cashflow-statement', 'Edu_ReportController@cashflowStatement');
     $router->get('/report/detail-student', 'Edu_ReportController@detailStudentReport');
     $router->get('/report/attendance-student', 'Edu_ReportController@attendanceReport');
+    $router->get('/report/income-statement', 'Edu_ReportController@incomeStatement');
+    $router->get('/report/edu-bep', 'Edu_ReportController@BEP');
     $router->resource('/core/business', Core_BusinessController::class);
     $router->resource('/core/branch', Core_BranchController::class);
     $router->resource('/core/bankaccount', Core_AccountController::class);
