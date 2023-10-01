@@ -324,7 +324,7 @@ class Edu_ReportController extends AdminController
             ->row(new Edu_BEPReport());
         if ($data = session('result')) {
             $results = DB::select("call edu_bep(?, ?)", [$data["from_date"], $data["to_date"]]);
-            $headers = ['Tháng(month)', 'Lịch học(schedule)', 'Số lượng học sinh(students)', 'Học phí(tuition_fee)', 'Doanh thu đã thực hiện(revenue)', 'Chi phí biến đổi(variable_cost)', 'Chi phí cứng(fix_cost)', 'Lợi nhuận(profit)', 'Điểm BEP(bep)'];
+            $headers = ['Tháng', 'Lịch học', 'Số lượng học sinh', 'Học phí', 'Doanh thu đã thực hiện', 'Chi phí biến đổi', 'Chi phí cứng', 'Lợi nhuận', 'Điểm BEP'];
             $rows = [];
             foreach ($results as $item => $row) {
                 $formattedTuitionFee = ConstantHelper::moneyFormatter($row->tuition_fee);
