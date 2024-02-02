@@ -27,10 +27,6 @@ class Tracker_ActionsController extends AdminController
     {
         $grid = new Grid(new TrackerActions());
         $grid->column('action_id', __('ID hành động'))->filter();
-        $grid->column('trello_id', __('ID Trello'))->filter();
-        $grid->column('idMemberCreator', __('ID người tạo'))->filter();
-        $grid->column('memberCreator', __('Người tạo'))->filter();
-        $grid->column('member', __('Người tham gia'))->filter();
         $grid->column('appCreator', __('appCreator'))->filter();
         $grid->column('limits', __('limits'))->filter();
         $grid->column('data', __('Dữ liệu'))->filter();

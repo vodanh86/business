@@ -26,49 +26,14 @@ class Tracker_CardsController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TrackerCards());
-        $grid->column('card_id', __('ID thẻ'))->filter();
-        $grid->column('trello_id', __('ID trello'))->filter();
-        $grid->column('address', __('Địa chỉ'))->filter();
-        $grid->column('badges', __('Huy hiệu'))->filter();
-        $grid->column('checkItemStates', __('Trạng thái thẻ'))->filter();
-        $grid->column('closed', __('Trạng thái đóng'))->filter();
-        $grid->column('coordinates', __('Toạ độ'))->filter();
-        $grid->column('creationMethod', __('Phương thức tạo'))->filter();
-        $grid->column('dueComplete', __('Lý do hoàn thành'))->filter();
-        $grid->column('dateLastActivity', __('Ngày cuối cùng hoạt động'))->filter();
-        $grid->column('desc', __('Mô tả'))->filter();
-        $grid->column('descData', __('Dữ liệu mô tả'))->filter();
-        $grid->column('due', __('Lý do'))->filter();
-        $grid->column('dueReminder', __('Nhắc nhở đúng hạn'))->filter();
-        $grid->column('email', __('Email'))->filter();
-        $grid->column('idBoard', __('ID hội đồng'))->filter();
-        $grid->column('idChecklists', __('ID Trạng thái danh sách'))->filter();
-        $grid->column('idLabels', __('ID nhãn'))->filter();
-        $grid->column('idList', __('ID Danh sách'))->filter();
-        $grid->column('idMembers', __('ID thành viên'))->filter();
-        $grid->column('idMembersVoted', __('ID thành viên đã vote'))->filter();
-        $grid->column('idOrganization', __('ID tổ chức'))->filter();
-        $grid->column('idShort', __('ID shorrt'))->filter();
-        $grid->column('idAttachmentCover', __('ID bìa đính kèm'))->filter();
-        $grid->column('labels', __('Nhãn'))->filter();
-        $grid->column('limits', __('Giới hạn'))->filter();
-        $grid->column('locationName', __('Tên vị trí'))->filter();
-        $grid->column('manualCoverAttachment', __('Cẩm nang đính kèm'))->filter();
+        $grid->column('id', __('ID'))->filter();
         $grid->column('name', __('Tên'))->filter();
-        $grid->column('nodeId', __('ID nhánh'))->filter();
-        $grid->column('pos', __('pos'))->filter();
-        $grid->column('shortLink', __('Link rút gọn'))->filter();
-        $grid->column('shortUrl', __('Đường dẫn rút gọn'))->filter();
-        $grid->column('staticMapUrl', __('Đường dẫn bản đồ tĩnh'))->filter();
-        $grid->column('start', __('Bắt đầu'))->filter();
-        $grid->column('subscribed', __('Đăng ký'))->filter();
-        $grid->column('url', __('Đường dẫn'))->filter();
-        $grid->column('cover', __('Cover'))->filter();
-        $grid->column('isTemplate', __('Trạng thái mẫu'))->filter();
-        $grid->column('cardRole', __('Vai trò thẻ'))->filter();
-        $grid->column('attachments', __('Đính kèm'))->filter();
-        $grid->column('pluginData', __('Dữ liệu plugin'))->filter();
-        $grid->column('customFieldItems', __('Trường tuỳ chỉnh'))->filter();
+        $grid->column('phoneNumber', __('Phone Number'))->filter()->sortable();
+        $grid->column('customer', __('Khách hàng'))->filter()->sortable();
+        $grid->column('customerAddress', __('Địa chỉ'))->filter()->sortable();
+        $grid->column('desc', __('Mô tả'))->filter();
+        $grid->column('shortUrl', __('Đường dẫn rút gọn'))->filter()->link();
+        $grid->column('dateLastActivity', __('Ngày cuối cùng hoạt động'))->filter();
         $grid->fixColumns(0, 0);
 
         $grid->filter(function ($filter) {
