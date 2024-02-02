@@ -26,16 +26,27 @@ class Tracker_ActionsController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TrackerActions());
-        $grid->column('action_id', __('ID hành động'));
-        $grid->column('trello_id', __('ID Trello'));
-        $grid->column('idMemberCreator', __('ID người tạo'));
-        $grid->column('memberCreator', __('Người tạo'));
-        $grid->column('member', __('Người tham gia'));
+        $grid->column('action_id', __('ID hành động'))->filter();
+        $grid->column('trello_id', __('ID Trello'))->filter();
+        $grid->column('idMemberCreator', __('ID người tạo'))->filter();
+        $grid->column('memberCreator', __('Người tạo'))->filter();
+        $grid->column('member', __('Người tham gia'))->filter();
+        $grid->column('appCreator', __('appCreator'))->filter();
+        $grid->column('limits', __('limits'))->filter();
+        $grid->column('data', __('Dữ liệu'))->filter();
+        $grid->column('type', __('Loại'))->filter();
+        $grid->column('date', __('Ngày tạo'))->filter();
 
-        $grid->column('data', __('Dữ liệu'));
-        $grid->column('type', __('Loại'));
-        $grid->column('date', __('Ngày tạo'))->display(function ($createdAt) {
-            return ConstantHelper::dateFormatter($createdAt);
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->equal('action_id', __('ID hành động'));
+            $filter->equal('trello_id', __('ID Trello'));
+            $filter->equal('idMemberCreator', __('ID người tạo'));
+            $filter->equal('memberCreator', __('Người tạo'));
+            $filter->equal('member', __('Người tham gia'));
+            $filter->equal('data', __('Dữ liệu'));
+            $filter->equal('type', __('Loại'));
+            $filter->date('date', __('Ngày tạo'));
         });
         return $grid;
     }
