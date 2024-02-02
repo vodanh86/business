@@ -53,4 +53,8 @@ Route::group([
     $router->resource('/edu/student-report', Edu_StudentReportController::class);
     $router->resource('/edu/report-detail', Edu_StudentReportDetailController::class);
     $router->resource('/edu/report-student', Edu_ReportOfStudentController::class);
+
+    $router->resource('/tracker/actions', Tracker_ActionsController::class);
+    $router->resource('/tracker/cards', Tracker_CardsController::class);
+    $router->resource('/tracker/trello', Tracker_TrelloController::class);
 });
