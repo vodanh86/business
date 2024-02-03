@@ -27,6 +27,7 @@ class Tracker_CardsController extends AdminController
     {
         $grid = new Grid(new TrackerCards());
         $grid->column('id', __('ID'))->filter();
+        $grid->column('trello_id', __('ID trello'))->filter();
         $grid->column('name', __('Tên'))->filter();
         $grid->column('phoneNumber', __('Phone Number'))->filter()->sortable();
         $grid->column('customer', __('Khách hàng'))->filter()->sortable();
