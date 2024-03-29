@@ -50,6 +50,9 @@ class Edu_TuitionCollectionController extends AdminController
         $grid->column('account_id', __('Số tài khoản'))->display(function ($accountNumber) {
             return UtilsCommonHelper::bankAccountGridFormatter($accountNumber);
         });
+        $grid->column('print', __('In hoá đơn thu tiền'))->display(function () {
+            return "<a class=\"fa fa-print\" href='print-bill?id=" . $this->id . "' target='_blank'></a>";
+        });
         $grid->column('status', __('Trạng thái'))->display(function ($value) {
             return ConstantHelper::transactionGridRecordStatus($value);
         });

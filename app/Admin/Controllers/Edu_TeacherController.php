@@ -40,6 +40,10 @@ class Edu_TeacherController extends AdminController{
         });
         $grid->model()->where('business_id', '=', Admin::user()->business_id);
         $grid->fixColumns(0, 0);
+        $grid->batchActions(function ($batch) {
+            $batch->add('<a href=""><i class="fa fa-eye"></i></a>');
+        });
+        
         return $grid;
     }
 

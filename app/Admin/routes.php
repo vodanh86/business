@@ -1,10 +1,6 @@
 <?php
 
-use App\Admin\Controllers\CustomOperatorLogController;
-use App\Admin\Controllers\CustomUserController;
-use Encore\Admin\Facades\Admin;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Route;
 
 Admin::routes();
 
@@ -18,6 +14,7 @@ Route::group([
 ], function (Router $router) {
     $router->get('/', 'HomeController@index');
     $router->get('/help', 'HelpController@index');
+    $router->get('/edu/print-bill', 'WordTemplateController@createBill');
     $router->get('/revenue', 'Edu_ReportController@eduReport');
     $router->get('/cashflow-statement', 'Edu_ReportController@cashflowStatement');
     $router->get('/report/detail-student', 'Edu_ReportController@detailStudentReport');
